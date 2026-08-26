@@ -4,16 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>marketplace</title>
-    <link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
       <header class="top">
         <div class="logo">CampusMart</div>
         <nav>
-            <a href="index.html">Home</a>
-            <a href="marketplace.html">Marketplace</a>
-            <a href="sell.html">Sell/Rent</a>
-            <a href="lost_found.html">Lost and Found</a>
+            <a href="{{ url_for('home_page') }}">Home</a>
+            <a href="{{ url_for('marketplace') }}">Marketplace</a>
+            <a href="{{ url_for('sell') }}">Sell/Rent</a>
+            <a href="{{ url_for('lost_found') }}">Lost and Found</a>
          </nav>
          <button class="login-btn">Login</button>
          </header>
