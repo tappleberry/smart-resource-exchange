@@ -17,8 +17,8 @@ def home_page():
 @app.route("/marketplace/")
 def marketplace():
     products = database.get_items()
-
-    return render_template("marketplace.html", products=products)
+    categories = database.get_categories()
+    return render_template("marketplace.html", products=products,categories=categories)
 
 
 @app.route("/marketplace/item/<int:item_id>/")
@@ -35,14 +35,46 @@ def product(item_id):
 def search():
     query = request.args.get("q")
     category = request.args.get("category")
+    listing_type = request.args.get("listing_type")
+    min_price = request.args.get("min_price")
+    max_price = request.args.get("max_price")
+    condition = request.args.get("condition")
+
+    # Convert prices from strings to numbers
+    if min_price:
+        min_price = float(min_price)
+    else:
+        min_price = None
+
+    if max_price:
+        max_price = float(max_price)
+    else:
+        max_price = None
 
     user_id = None
 
-    database.log_search(user_id=user_id, query=query, category=category)
+    database.log_search(
+        user_id=user_id,
+        query=query,
+        category=category
+    )
 
-    items = database.search_items(query=query, category=category)
+    products = database.search_items(
+        query=query,
+        category=category,
+        listing_type=listing_type,
+        min_price=min_price,
+        max_price=max_price,
+        condition=condition
+    )
 
-    return items
+    categories = database.get_categories()
+
+    return render_template(
+        "marketplace.html",
+        products=products,
+        categories=categories
+    )
 
 @app.route("/api/marketplace/trends/")
 def trends():

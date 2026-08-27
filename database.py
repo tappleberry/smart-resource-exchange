@@ -212,11 +212,11 @@ def search_items(
             ])
 
         if category:
-            sql += "AND category = ?"
+            sql += " AND category = ?"
             parameters.append(category)
 
         if listing_type:
-            sql += "AND listing_type = ?"
+            sql += " AND listing_type = ?"
             parameters.append(listing_type)
 
         if min_price is not None:
@@ -278,6 +278,25 @@ def get_items_by_seller(seller_id):
 
         items = cursor.fetchall()
         return items
+
+    finally:
+        connection.close()
+
+def get_categories():
+    connection = get_connection()
+    try:
+
+        cursor = connection.execute(
+                """
+                SELECT DISTINCT category 
+                FROM items
+                WHERE status = 'available'
+                ORDER BY LOWER(category)
+                """
+        )
+        categories = cursor.fetchall()
+
+        return categories
 
     finally:
         connection.close()
