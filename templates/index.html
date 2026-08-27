@@ -3,18 +3,98 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Main</title>
+    <title>Campusmart</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    
+    <script defer src="{{ url_for('static', filename='js/main.js') }}"></script>
 </head>
 <body>
     <header class="top">
-        <div class="logo">🛍️Campusmart</div>
+        <div class="logo">🛍️ Campusmart</div>
         <nav>
             <a href="{{ url_for('home_page') }}">Home</a>
             <a href="{{ url_for('marketplace') }}">Marketplace</a>
             <a href="{{ url_for('sell') }}">Sell/Rent</a>
             <a href="{{ url_for('lost_found') }}">Lost and Found</a>
+        </nav>
+        <div class="buttons">
+            <button type="button">Login</button>
+            <button type="button">Sign up</button>
+        </div>
+    </header>
+
+    <section class="main">
+        <h1>Smart Campus,<br>Smarter Connections.</h1>
+        <p>Buy, Sell, Rent, and discover items within your Campus community <br>
+           or help someone find what they've lost.<br>
+        </p>
+        <p>All in one smart platform.</p>
+
+        <div class="image">
+            <img src="{{ url_for('static', filename='images/background.png') }}" alt="Campus background">
+        </div>
+   
+        <div class="top-btn">
+            <a href="{{ url_for('marketplace') }}" class="btn">👜 Explore Marketplace</a>
+            <a href="{{ url_for('lost_found') }}" class="btn">Go to Lost & Found</a>
+        </div>
+    </section>
+
+    <section class="boxes">
+        <div class="box">
+            <div class="box-content">
+                <h2>🛒 Marketplace</h2>
+                <h4>Buy, Sell & Rent</h4>
+                <p>Find anything you need or list items you no longer use. From books to bikes, we've got you covered.</p>
+                <a href="{{ url_for('marketplace') }}" class="explore">Explore Marketplace &rarr;</a>
+            </div>
+            <div class="mimage">
+                <img src="{{ url_for('static', filename='images/marketplaceimg.png') }}" alt="Marketplace">
+            </div>
+        </div>
+
+        <div class="box">
+            <div class="box-content">
+                <h2>Lost & Found</h2>
+                <h4>Lost or Found Something?</h4>
+                <p>Report lost items or help others by reporting found items. Reunite and make a difference.</p>
+                <a href="{{ url_for('lost_found') }}" class="explore">Go to Lost and Found &rarr;</a>
+            </div>
+            <div class="mimage">
+                <img src="{{ url_for('static', filename='images/lostimg.png') }}" alt="Lost and Found">
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <div class="end">
+            <p><b>Smart Campus Hub —</b> Connecting our Campus, one item at a time 🎓</p>
+        </div>
+    </footer>
+</body>
+</html>
+
+
+
+
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Main</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</head>
+<body>
+    <header class="top">
+        <div class="logo">🛍️Campusmart</div>
+        <nav>
+            <form action="/navigate" method="POST">
+            <a>Home</a>
+            <a>Marketplace</a>
+            <a>Sell/Rent</a>
+            <a>Lost and Found</a>
+            </form>
          </nav>
          <div class="buttons">
          <button>Login</button>
@@ -84,4 +164,4 @@
 
 
 </body>
-</html>
+</html> -->
