@@ -7,34 +7,157 @@
     <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
-      <header class="top">
-        <div class="logo">CampusMart</div>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="marketplace.html">Marketplace</a>
-            <a href="sell.html">Sell/Rent</a>
-            <a href="lost_found.html">Lost and Found</a>
-         </nav>
-         <button class="login-btn">Login</button>
-         </header>
-         <main>
-            
-            <input type="text" placeholder="Search Products">
-            <button class="search">Search</button>
-            <select class="categories">
-                <option>All categories</option>
-                <option>Stationery</option>
-                <option>Books</option>
-                <option>Old-Cyles</option>
-                <option>Electronics</option>
-            </select>
-            <section class="availabe">
-                <h2>Available Products</h2>
-            </section>
-            <div class="product-Card">
+      <div class="page">
 
+    <aside class="sidebar">
+        <h2>🛍️  Campusmart </h2>
+        <p>Marketplace</p>
+        <nav class="sidebar-categories">
+
+        <a href="index.html" class="nav-item">
+            <span class="icon">🏠︎</span>
+            <span>Home</span>
+        </a>
+
+        <a href="marketplace.html" class="nav-item active">
+            <span class="icon">🛒</span>
+            <span>Marketplace</span>
+        </a>
+        <a href="lost_found.html" class="nav-item">
+            <span class="icon">🕵🏻‍♀️</span>
+            <span>Lost & Found</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <span class="icon">📦</span>
+            <span>My Orders</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <span class="icon">💬</span>
+            <span>Messages</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <span class="icon">🤍</span>
+            <span>Favorites</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <span class="icon">👤</span>
+            <span>Profile</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <span class="icon">⚙️</span>
+            <span>Settings</span>
+        </a>
+
+        <a href="#" class="nav-item logout">
+            <span class="icon">➜]</span>
+            <span>Logout</span>
+        </a>
+
+ </nav>
+    </aside>
+        <header class="top2">
+            <div>
+           <h1>Marketplace</h1>
+            <p>Buy,Sell and rent items within your Campus community.</p>
             </div>
-         </main>
+            <div class="search">
+                <input type="text" placeholder="enter the item you want to search....">
+                <button>Search</button>
+            </div>
+            <div class="profile">
+
+                <span>♡</span>
+                <span>💬</span>
+                <span>🕭</span>
+                </div>
+
+        </header>
+         <section class="middle">
+            <h2>Popular Listings</h2>
+            <a href="item.html?id=1" class="product-link">
+            <div class="product-card">
+
+    <div class="product-image">
+        <img src="marketplaceimages/calculator.png" alt="Calculator">
+    </div>
+    <h3>Casio Calculator</h3>
+    <span class="category">Electronics</span>
+       <h4>₹850</h4>
+  <p>Good · Sell</p>
+</div>
+</a>
+<a href="item.html?id=2" class="product-link">
+<div class="product-card">
+    <div class="product-image">
+        <img src="marketplaceimages/cycle.png" alt="Bicycle">
+    </div>
+    <h3>FireFox Cycle</h3>
+    <span class="category">Cycles</span>
+    <h4>₹3,200</h4>
+    <p>Good · Sell</p>
+
+</div>
+</a>
+<a href="item.html?id=3" class="product-link">
+<div class="product-card">
+   <div class="product-image">
+        <img src="marketplaceimages/laptop.png" alt="Laptop">
+    </div>
+   <h3>HP Pavilion 15</h3>
+    <span class="category">Electronics</span>
+    <h4>₹24,000</h4>
+    <p>Good · Sell</p>
+</div>
+</a>
+<a href="item.html?id=4" class="product-link">
+<div class="product-card">
+   <div class="product-image">
+        <img src="marketplaceimages/headphones.png" alt="headphons">
+    </div>
+   <h3>boat Rockerz 650 pro</h3>
+    <span class="category">Electronics</span>
+    <h4>₹2000</h4>
+    <p>Good · Sell</p>
+</div>
+</a>
+<a href="item.html?id=5" class="product-link">
+<div class="product-card">
+   <div class="product-image">
+        <img src="marketplaceimages/labcoat.png" alt="Laptop">
+    </div>
+   <h3>Lab Coat</h3>
+    <span class="category">Clothing</span>
+    <h4>₹250</h4>
+    <p>Good · Sell</p>
+</div>
+</a>
+<a href="item.html?id=1" class="product-link">
+<div class="product-card">
+   <div class="product-image">
+        <img src="marketplaceimages/book.png" alt="Laptop">
+    </div>
+   <h3>Engineering Mathematics</h3>
+    <span class="category">Books</span>
+    <h4>₹400</h4>
+    <p>Good · Sell</p>
+</div>
+</a>
+  </section>
+
+
+      </div>
+      <footer class="end">
+        <div class="end">
+            <p><b>Smart Campus hub-</b>Connecting our Campus,one item at a time🎓</p>
+            
+            </div>
+
+      </footer>
     
 </body>
 </html>

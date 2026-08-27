@@ -7,25 +7,142 @@
     <link rel="stylesheet" href="../static/css/style.css">
 </head>
 <body>
-    <header class="top">
-        <div class="logo">CampusMart</div>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="marketplace.html">Marketplace</a>
-            <a href="sell.html">Sell/Rent</a>
-            <a href="lost_found.html">Lost and Found</a>
-         </nav>
-         <button class="login-btn">Login</button>
+   <div class="page">
 
-    </header>
-    <main>
+    <aside class="sidebar">
+        <h2>🛍️  Campusmart </h2>
+        <p>Marketplace</p>
+        <nav class="sidebar-categories">
+
+        <a href="index.html" class="nav-item">
+            <span class="icon">🏠︎</span>
+            <span>Home</span>
+        </a>
+
+        <a href="marketplace.html" class="nav-item ">
+            <span class="icon">🛒</span>
+            <span>Marketplace</span>
+        </a>
+        <a href="lost_found.html" class="nav-item active ">
+            <span class="icon">🛒</span>
+            <span>Lost & Found</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <span class="icon">📦</span>
+            <span>My Orders</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <span class="icon">💬</span>
+            <span>Messages</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <span class="icon">🤍</span>
+            <span>Favorites</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <span class="icon">👤</span>
+            <span>Profile</span>
+        </a>
+
+        <a href="#" class="nav-item">
+            <span class="icon">⚙️</span>
+            <span>Settings</span>
+        </a>
+
+        <a href="#" class="nav-item logout">
+            <span class="icon">➜]</span>
+            <span>Logout</span>
+        </a>
+        </nav>
+    </aside>
+    <div class="top-part">
         <h1>Lost & Found</h1>
-        <p1>report or find lost item in your campus</p1><br>
-        <buttons class="lost-btn">
-            <button>All items</button>
-            <button>Lost</button>
-            <button>Found</button>
-        </buttons>
-    </main>
+        <h4>Lost something? Found something?</h4>
+        <p>Report lost items or help others by<br>finding and reuniting items with<br>their owners.</p>
+        <div class="buttons">
+            <button>🔍 Browse Found items</button>
+            <button>Report Lost item</button>
+        </div>
+        <div class="image-back">
+            <img src="lost_foundimages/back.png" alt="background">
+        </div>
+        <div class="side-box">
+            <h2>Search for items</h2>
+            <input item="text" placeholder="search by item name...">
+            <button>Search</button>
+            <h3>Report Found item</h3>
+            <p>Found something?Help someone<br>get it back</p>
+            <button>Report Found item</button>
+        </div>
+    </div>
+    <div class="heading">
+        <h2>Recent Found Items</h2>
+   
+    <div class="lostfoundimages">
+        <div class="lost-card">
+       <div class="lost-image">
+        <img src="lost_foundimages/headphones.png" alt="headphones">
+    </div>
+    <h3>Found</h3>
+    <span class="category">Electronics</span>
+       <h4>Blue headphones</h4>
+  <p>loacation-library</p>
+</div>
+<div class="lost-card">
+       <div class="lost-image">
+        <img src="lost_foundimages/keys.png" alt="keys">
+    </div>
+    <h3>Found</h3>
+    <span class="category">Accessories</span>
+       <h4>Keychain</h4>
+  <p>Location-Admin building</p>
+</div>
+<div class="lost-card">
+       <div class="lost-image">
+        <img src="lost_foundimages/wallet.png" alt="keys">
+    </div>
+    <h3>Lost</h3>
+    <span class="category">Accessories</span>
+       <h4>brown wallet</h4>
+  <p>Location-GS3</p>
+</div>
+<div class="lost-card">
+       <div class="lost-image">
+        <img src="lost_foundimages/watch.png" alt="keys">
+    </div>
+    <h3>Lost</h3>
+    <span class="category">Accessories</span>
+       <h4>watch</h4>
+  <p>Location-ground</p>
+</div>
+<div class="lost-card">
+       <div class="lost-image">
+        <img src="lost_foundimages/bag.png" alt="keys">
+    </div>
+    <h3>Lost</h3>
+    <span class="category">Bags</span>
+       <h4>Blue Backpack</h4>
+  <p>Location-GS3</p>
+</div>
+ </div>
+
+
+
+        
+
+    </div>
+    </div>
+    <footer class="end">
+        <div class="end">
+            <p>
+            <h4>Let's make our campus a better place by helping each other</h4>
+            <p>If you find something,report it.If you lost something,we're here to help!</p>
+            </p>
+        </div>
+    </footer>
 </body>
 </html>

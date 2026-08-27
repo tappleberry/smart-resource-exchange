@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{{ item.title }} | Campusmart</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="page">
+    <aside class="sidebar">
+
+        <h2>🛍️ Campusmart</h2>
+        <p>Marketplace</p>
+
+        <nav class="sidebar-categories">
+
+            <a href="{{ url_for('home') }}" class="nav-item">
+                <span class="icon">🏠︎</span>
+                <span>Home</span>
+            </a>
+
+            <a href="{{ url_for('marketplace') }}" class="nav-item active">
+                <span class="icon">🛒</span>
+                <span>Marketplace</span>
+            </a>
+
+            <a href="{{ url_for('lost_found') }}" class="nav-item">
+                <span class="icon">🕵🏻‍♀️</span>
+                <span>Lost & Found</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="icon">📦</span>
+                <span>My Orders</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="icon">💬</span>
+                <span>Messages</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="icon">🤍</span>
+                <span>Favorites</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="icon">👤</span>
+                <span>Profile</span>
+            </a>
+
+            <a href="#" class="nav-item">
+                <span class="icon">⚙️</span>
+                <span>Settings</span>
+            </a>
+
+            <a href="#" class="nav-item logout">
+                <span class="icon">➜]</span>
+                <span>Logout</span>
+            </a>
+
+        </nav>
+
+    </aside>
+    <main class="item-detail-page">
+
+        <a href="{{ url_for('marketplace') }}" class="back-link">
+            ← Back to Marketplace
+        </a>
+
+
+        <div class="item-detail-container">
+            <div class="item-detail-image">
+
+                {% if item.image %}
+                    <img src="{{ item.image }}"
+                         alt="{{ item.title }}">
+                {% else %}
+                    <p>No image available</p>
+                {% endif %}
+
+            </div>
+
+            <div class="item-detail-info">
+
+                <span class="category">
+                    {{ item.category }}
+                </span>
+
+                <h1>{{ item.title }}</h1>
+
+                <h2 class="item-price">
+                    ₹{{ item.price }}
+                </h2>
+
+
+                <div class="item-status">
+
+                    <span>
+                        Condition: <strong>{{ item.condition }}</strong>
+                    </span>
+
+                    <span>
+                        {{ item.item_type }}
+                    </span>
+
+                </div>
+
+
+                <hr>
+
+                <h3>Description</h3>
+
+                <p class="description">
+                    {{ item.description }}
+                </p>
+                <div class="seller-section">
+
+                    <h3>Seller</h3>
+
+                    <div class="seller-info">
+
+                        <div class="seller-avatar">
+                            👤
+                        </div>
+
+                        <div>
+                            <strong>{{ item.seller }}</strong>
+                            <p>Campus Student</p>
+                        </div>
+
+                    </div>
+
+                </div>
+                <div class="item-actions">
+
+                    {% if item.item_type == "Sell" %}
+
+                        <button class="buy-btn">
+                            Buy Now
+                        </button>
+
+                        <button class="message-btn">
+                            💬 Contact Seller
+                        </button>
+
+
+                    {% elif item.item_type == "Rent" %}
+
+                        <button class="buy-btn">
+                            Rent Now
+                        </button>
+
+                        <button class="message-btn">
+                            💬 Contact Seller
+                        </button>
+
+
+                    {% else %}
+
+                        <button class="buy-btn">
+                            Buy Now
+                        </button>
+
+                        <button class="rent-btn">
+                            Rent Now
+                        </button>
+
+                        <button class="message-btn">
+                            💬 Contact Seller
+                        </button>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+<footer class="end">
+
+    <p>
+        <b>Smart Campus hub -</b>
+        Connecting our Campus, one item at a time 🎓
+    </p>
+
+</footer>
+
+</body>
+</html>
