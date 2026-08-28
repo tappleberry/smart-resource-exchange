@@ -26,21 +26,25 @@ client = genai.Client(api_key=api_key)
 
 
 # --------------------------------------------------
-# 3. Analyze an item image
+# 3. Analyze item image
 # --------------------------------------------------
 
 def analyze_item(image_path):
     """
-    Analyze an uploaded item image using Gemini.
+    Analyze an item image using Gemini.
+
+    Args:
+        image_path (str): Path to the image file.
 
     Returns:
-        dict containing:
-        - item_name
-        - category
-        - condition
-        - color
-        - tags
-        - description
+        dict: Structured item information containing:
+            - item_name
+            - category
+            - condition
+            - color
+            - tags
+            - description
+            - suggested_price
     """
 
     image = Image.open(image_path)
@@ -53,13 +57,25 @@ def analyze_item(image_path):
                 Analyze this image as an item that could be listed
                 on a college campus marketplace.
 
-                Identify:
+                Identify the following:
+
                 1. item_name
                 2. category
                 3. condition
                 4. color
                 5. tags
                 6. description
+                7. suggested_price
+
+                For suggested_price:
+                - Give an approximate second-hand resale price
+                  in Indian Rupees (INR).
+                - Consider the visible condition, category,
+                  brand/model if identifiable, and likely
+                  campus-market resale value.
+                - Return only the numeric price.
+                - Do not include the ₹ symbol or any text
+                  inside suggested_price.
 
                 Return only valid JSON.
                 """,
@@ -90,6 +106,9 @@ def analyze_item(image_path):
                         },
                         "description": {
                             "type": "string"
+                        },
+                        "suggested_price": {
+                            "type": "number"
                         }
                     },
                     "required": [
@@ -98,13 +117,13 @@ def analyze_item(image_path):
                         "condition",
                         "color",
                         "tags",
-                        "description"
+                        "description",
+                        "suggested_price"
                     ]
                 }
             }
         )
 
-        # Convert JSON string returned by Gemini into Python dictionary
         result = json.loads(response.text)
 
         return result
@@ -114,11 +133,10 @@ def analyze_item(image_path):
 
 
 # --------------------------------------------------
-# 4. Test the function directly
+# 4. Local testing
 # --------------------------------------------------
 
-if __name__ == "__main__":
-
+def main():
     image_path = "uploads/calculator.png"
 
     try:
@@ -126,7 +144,6 @@ if __name__ == "__main__":
 
         print("\nAI ANALYSIS RESULT")
         print("------------------")
-
         print(json.dumps(result, indent=4))
 
     except FileNotFoundError:
@@ -135,3 +152,11 @@ if __name__ == "__main__":
     except Exception as e:
         print("Error while analyzing image:")
         print(e)
+
+
+# --------------------------------------------------
+# 5. Run test only when this file is executed directly
+# --------------------------------------------------
+
+if __name__ == "__main__":
+    main()
