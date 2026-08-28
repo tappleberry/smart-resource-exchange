@@ -4,17 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Main</title>
-<link rel="stylesheet" href="../static/css/style.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     
 </head>
 <body>
     <header class="top">
         <div class="logo">🛍️Campusmart</div>
         <nav>
-            <a href="index.html">Home</a>
-            <a href="marketplace.html">Marketplace</a>
-            <a href="sell.html">Sell/Rent</a>
-            <a href="lost_found.html">Lost and Found</a>
+            <a href="{{ url_for('home_page') }}">Home</a>
+            <a href="{{ url_for('marketplace') }}">Marketplace</a>
+            <a href="{{ url_for('sell') }}">Sell/Rent</a>
+            <a href="{{ url_for('lost_found') }}">Lost and Found</a>
          </nav>
          <div class="buttons">
          <button>Login</button>
@@ -30,14 +30,14 @@
             </p>
             <p>  All in one smart platform.</p>
             <div class="image">
-                <img src ="background.png" alt="background">
+                <img src ="{{ url_for('static', filename='images/background.png') }}" alt="background">
             </div>
        
        
          <div class="top-btn">
             
-            <button><a href="marketplace.html">👜 Explore Marketplace</a></button>
-            <button><a href="sell.html">Go to Lost &Found</a></button>
+            <button><a href="{{ url_for('marketplace') }}">👜 Explore Marketplace</a></button>
+            <button><a href="{{ url_for('lost_found') }}">Go to Lost &Found</a></button>
          </div>
          <div class="trusted">
           
@@ -51,11 +51,11 @@
                 <p>Find anything you need or list items you no longer<br>
                 use.From books to bikes,we've got you covered. </p>
                 <button class="explore">
-                    <a href="marketplace.html">Explore Marketplace -></a>
+                    <a href="{{ url_for('marketplace') }}">Explore Marketplace -></a>
                 </button>
                 </div>
                 <div class="mimage">
-                    <img src="marketplaceimg.png" alt="images">
+                    <img src="{{ url_for('static', filename='images/marketplaceimg.png') }}" alt="images">
                 </div>
                 
                 
@@ -67,11 +67,11 @@
                 <p>Report lost items or help others by reporting<br>
                     found items.Reunite and make a difference</p>
                     <button class="explore">
-                        <a href="lost_found.html">Go to Lost and Found -></a>
+                        <a href="{{ url_for('lost_found') }}">Go to Lost and Found -></a>
                     </button>
                     </div>
                     <div class="mimage">
-                        <img src="lostimg.png" alt="images">
+                        <img src="{{ url_for('static', filename='images/lostimg.png') }}" alt="images">
                     </div>
             </div>
          </section>
