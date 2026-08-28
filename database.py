@@ -507,6 +507,174 @@ def get_category_supply():
     finally:
         connection.close()
 
+def get_category_interactions():
+    """
+    Get category-wise interaction counts.
+
+    Returns:
+        List of rows containing:
+        - category
+        - views
+        - favorites
+    """
+
+    connection = get_connection()
+
+    try:
+        cursor = connection.execute(
+            """
+            SELECT
+                items.category,
+
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN interactions.action = 'view'
+                            THEN 1
+                            ELSE 0
+                        END
+                    ),
+                    0
+                ) AS views,
+
+                COALESCE(
+                    SUM(
+                        CASE
+                            WHEN interactions.action = 'favorite'
+                            THEN 1
+                            ELSE 0
+                        END
+                    ),
+                    0
+                ) AS favorites
+
+            FROM items
+
+            LEFT JOIN interactions
+                ON items.id = interactions.item_id
+
+            GROUP BY items.category
+
+            ORDER BY LOWER(items.category)
+            """
+        )
+
+        results = cursor.fetchall()
+        return results
+
+    finally:
+        connection.close()
+
+def get_category_feature_data():
+    """
+    Combine category-wise searches, views, favorites,
+    and available listings.
+
+    Returns:
+        List of dictionaries with:
+        - category
+        - searches
+        - views
+        - favorites
+        - listings
+    """
+
+    connection = get_connection()
+
+    try:
+        cursor = connection.execute(
+            """
+            SELECT
+                categories.category,
+
+                COALESCE(search_data.searches, 0) AS searches,
+
+                COALESCE(interaction_data.views, 0) AS views,
+
+                COALESCE(interaction_data.favorites, 0) AS favorites,
+
+                COALESCE(supply_data.listings, 0) AS listings
+
+            FROM
+            (
+                SELECT category
+                FROM items
+                WHERE category IS NOT NULL
+
+                UNION
+
+                SELECT category
+                FROM searches
+                WHERE category IS NOT NULL
+            ) AS categories
+
+            LEFT JOIN
+            (
+                SELECT
+                    category,
+                    COUNT(*) AS searches
+                FROM searches
+                WHERE category IS NOT NULL
+                GROUP BY category
+            ) AS search_data
+
+            ON categories.category = search_data.category
+
+            LEFT JOIN
+            (
+                SELECT
+                    items.category,
+
+                    SUM(
+                        CASE
+                            WHEN interactions.action = 'view'
+                            THEN 1
+                            ELSE 0
+                        END
+                    ) AS views,
+
+                    SUM(
+                        CASE
+                            WHEN interactions.action = 'favorite'
+                            THEN 1
+                            ELSE 0
+                        END
+                    ) AS favorites
+
+                FROM items
+
+                LEFT JOIN interactions
+                    ON items.id = interactions.item_id
+
+                GROUP BY items.category
+
+            ) AS interaction_data
+
+            ON categories.category = interaction_data.category
+
+            LEFT JOIN
+            (
+                SELECT
+                    category,
+                    COUNT(*) AS listings
+                FROM items
+                WHERE status = 'available'
+                GROUP BY category
+            ) AS supply_data
+
+            ON categories.category = supply_data.category
+
+            ORDER BY LOWER(categories.category)
+            """
+        )
+
+        rows = cursor.fetchall()
+
+        return [dict(row) for row in rows]
+
+    finally:
+        connection.close()
+
 def get_item_interaction_stats(item_id):
     connection = get_connection()
     try:
