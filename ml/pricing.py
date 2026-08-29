@@ -1,8 +1,4 @@
 # --------------------------------------------------
-# Reference prices for marketplace categories
-# --------------------------------------------------
-
-# --------------------------------------------------
 # Category normalization / aliases
 # --------------------------------------------------
 
@@ -12,6 +8,7 @@ CATEGORY_ALIASES = {
 
     "vehicles & transport": "cycles",
     "bicycles & transport": "cycles",
+    "transportation": "cycles",
     "bicycles": "cycles",
     "bicycle": "cycles",
     "cycle": "cycles",
@@ -20,8 +17,14 @@ CATEGORY_ALIASES = {
     "books": "books",
     "furniture": "furniture",
     "clothing": "clothing",
+
     "other": "other"
 }
+
+
+# --------------------------------------------------
+# Reference prices for marketplace categories
+# --------------------------------------------------
 
 REFERENCE_PRICES = {
     "electronics": 1000,
@@ -43,6 +46,7 @@ CONDITION_FACTORS = {
     "used": 0.60
 }
 
+
 # --------------------------------------------------
 # Condition normalization / aliases
 # --------------------------------------------------
@@ -59,6 +63,7 @@ CONDITION_ALIASES = {
     "fair": "used",
     "average": "used"
 }
+
 
 # --------------------------------------------------
 # Suggested price calculation
@@ -77,18 +82,21 @@ def suggest_price(category, condition):
     if not condition:
         condition = "used"
 
+    # Normalize category
     raw_category = str(category).strip().lower()
 
     category_key = CATEGORY_ALIASES.get(
-    raw_category,
-    "other"
-)
+        raw_category,
+        "other"
+    )
+
+    # Normalize condition
     raw_condition = str(condition).strip().lower()
 
     condition_key = CONDITION_ALIASES.get(
-    raw_condition,
-    "used"
-)
+        raw_condition,
+        "used"
+    )
 
     # Get reference price
     base_price = REFERENCE_PRICES.get(
@@ -105,6 +113,7 @@ def suggest_price(category, condition):
     suggested_price = base_price * factor
 
     return round(suggested_price)
+
 
 # --------------------------------------------------
 # Generate pricing information from AI result
