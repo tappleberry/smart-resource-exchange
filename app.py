@@ -6,6 +6,7 @@ from werkzeug.utils import secure_filename
 
 import database
 from ai.vision import analyze_item
+from ml.pricing import suggest_price_from_ai_result
 
 
 # ==================================================
@@ -20,7 +21,6 @@ app = Flask(__name__)
 # ==================================================
 
 PROJECT_ROOT = Path(__file__).resolve().parent
-
 UPLOAD_FOLDER = PROJECT_ROOT / "uploads"
 
 ALLOWED_EXTENSIONS = {"png", "jpg", "jpeg", "webp"}
@@ -101,7 +101,10 @@ def search():
     max_price = request.args.get("max_price")
     condition = request.args.get("condition")
 
+    # ----------------------------------------------
     # Convert prices from strings to numbers
+    # ----------------------------------------------
+
     if min_price:
         min_price = float(min_price)
     else:
@@ -112,6 +115,10 @@ def search():
     else:
         max_price = None
 
+    # ----------------------------------------------
+    # Log search
+    # ----------------------------------------------
+
     user_id = None
 
     database.log_search(
@@ -119,6 +126,10 @@ def search():
         query=query,
         category=category
     )
+
+    # ----------------------------------------------
+    # Search marketplace
+    # ----------------------------------------------
 
     products = database.search_items(
         query=query,
@@ -144,6 +155,7 @@ def search():
 
 @app.route("/api/marketplace/trends/")
 def trends():
+
     return database.get_search_demand()
 
 
@@ -212,13 +224,42 @@ def analyze_image():
         image.save(image_path)
 
         # ------------------------------------------
-        # Send image to Gemini
+        # Analyze image using Gemini
         # ------------------------------------------
 
         result = analyze_item(str(image_path))
 
         # ------------------------------------------
-        # Return AI result
+        # Apply rule-based pricing
+        # ------------------------------------------
+        #
+        # Do NOT use Gemini's raw suggested_price
+        # as the final marketplace price.
+        #
+        # Unclear items should keep price = 0.
+        # ------------------------------------------
+
+        is_unclear_item = (
+            result.get("item_name") == "Unclear Item"
+            or (
+                result.get("category") == "Other"
+                and result.get("condition") == "Unknown"
+            )
+        )
+
+        if is_unclear_item:
+
+            result["suggested_price"] = 0
+
+        else:
+
+            final_price = suggest_price_from_ai_result(result)
+
+            if final_price is not None:
+                result["suggested_price"] = final_price
+
+        # ------------------------------------------
+        # Return final AI + pricing result
         # ------------------------------------------
 
         return jsonify({
@@ -228,9 +269,29 @@ def analyze_image():
 
     except Exception as e:
 
+        error_message = str(e)
+
+        # ------------------------------------------
+        # Handle Gemini quota errors separately
+        # ------------------------------------------
+
+        if (
+            "quota exceeded" in error_message.lower()
+            or "resource_exhausted" in error_message.lower()
+            or "429" in error_message
+        ):
+            return jsonify({
+                "success": False,
+                "error": error_message
+            }), 429
+
+        # ------------------------------------------
+        # Handle all other errors
+        # ------------------------------------------
+
         return jsonify({
             "success": False,
-            "error": str(e)
+            "error": error_message
         }), 500
 
 
@@ -240,6 +301,7 @@ def analyze_image():
 
 @app.route("/sell-rent/")
 def sell():
+
     return render_template("sell.html")
 
 
@@ -285,6 +347,7 @@ def add_item():
 
 @app.route("/lost_found/")
 def lost_found():
+
     return render_template("lost_found.html")
 
 
