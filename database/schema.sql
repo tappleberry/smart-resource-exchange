@@ -49,6 +49,7 @@ CREATE TABLE IF NOT EXISTS lost_found(
     report_type TEXT NOT NULL,
 
     title TEXT NOT NULL,
+
     description TEXT,
 
     category TEXT,
@@ -57,11 +58,20 @@ CREATE TABLE IF NOT EXISTS lost_found(
 
     location TEXT,
 
+    ai_object TEXT,
+
+    ai_color TEXT,
+
+    ai_type TEXT,
+
+    ai_features TEXT,
+
     reported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
     status TEXT DEFAULT 'active',
 
     FOREIGN KEY (user_id) REFERENCES users(id)
+
 );
 
 CREATE TABLE IF NOT EXISTS searches(

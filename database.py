@@ -310,10 +310,16 @@ def create_lost_found_report(
     description,
     category,
     image_path,
-    location
+    location,
+    ai_object=None,
+    ai_color=None,
+    ai_type=None,
+    ai_features=None
 ):
     connection = get_connection()
+
     try:
+
         cursor = connection.execute(
             """
             INSERT INTO lost_found
@@ -324,9 +330,13 @@ def create_lost_found_report(
                 description,
                 category,
                 image_path,
-                location
+                location,
+                ai_object,
+                ai_color,
+                ai_type,
+                ai_features
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
                 user_id,
@@ -335,7 +345,11 @@ def create_lost_found_report(
                 description,
                 category,
                 image_path,
-                location
+                location,
+                ai_object,
+                ai_color,
+                ai_type,
+                ai_features
             )
         )
 
@@ -343,10 +357,11 @@ def create_lost_found_report(
 
         report_id = cursor.lastrowid
         return report_id
-    
+
     except sqlite3.Error:
         connection.rollback()
         raise
+
     finally:
         connection.close()
 
