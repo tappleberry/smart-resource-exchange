@@ -1,17 +1,46 @@
+import os
 import json
 
+from dotenv import load_dotenv
+from google import genai
+from PIL import Image
 
-# --------------------------------------------------
-# 1. Prompt for Lost & Found attribute extraction
-# --------------------------------------------------
+
+# ==================================================
+# 1. Load environment variables
+# ==================================================
+
+load_dotenv()
+
+api_key = os.getenv("GEMINI_API_KEY")
+
+if not api_key:
+    raise ValueError(
+        "GEMINI_API_KEY not found in .env file"
+    )
+
+
+# ==================================================
+# 2. Create Gemini client
+# ==================================================
+
+client = genai.Client(
+    api_key=api_key
+)
+
+
+# ==================================================
+# 3. Lost & Found AI Prompt
+# ==================================================
 
 LOST_FOUND_PROMPT = """
 Analyze this image for a college campus Lost & Found system.
 
-Extract only attributes that are clearly visible or reasonably
-identifiable from the image.
+Identify the main physical object visible in the image.
 
-Return ONLY valid JSON with these fields:
+Return ONLY valid JSON.
+
+Required fields:
 
 {
     "object": "main object/item",
@@ -25,70 +54,39 @@ Return ONLY valid JSON with these fields:
 
 Important rules:
 
-1. Do NOT guess when the object is unclear.
-2. If the image is blurry, empty, mostly a background, or the
-   object cannot be identified reliably, use:
-   - object = "Unknown"
-   - color = "Unknown"
-   - type = "Unknown"
-   - features = []
+1. Identify an object ONLY if a distinct physical object is clearly
+   visible and recognizable.
 
-3. Do not invent brand names or hidden features.
-4. Only include features that are actually visible.
-5. Return only valid JSON.
+2. If the image is blurry, empty, mostly a background, or the object
+   cannot be identified reliably, do NOT guess.
+
+3. For an unclear image return:
+
+   {
+       "object": "Unknown",
+       "color": "Unknown",
+       "type": "Unknown",
+       "features": []
+   }
+
+4. Never invent a brand, model, or feature that is not clearly visible.
+
+5. Only include features that can actually be observed in the image.
+
+6. Keep the response focused on the object useful for a Lost & Found
+   system.
+
+7. Return only JSON.
 """
 
 
-# --------------------------------------------------
-# 2. Convert AI response into safe structured data
-# --------------------------------------------------
-
-def parse_lost_found_result(response_text):
-    """
-    Convert Gemini's JSON response into a Python dictionary.
-
-    Args:
-        response_text (str): Raw JSON text returned by Gemini.
-
-    Returns:
-        dict: Structured Lost & Found attributes.
-    """
-
-    try:
-        result = json.loads(response_text)
-
-    except json.JSONDecodeError as e:
-        raise ValueError(
-            f"Invalid Lost & Found AI JSON: {e}"
-        )
-
-    # ----------------------------------------------
-    # Ensure required fields exist
-    # ----------------------------------------------
-
-    result.setdefault("object", "Unknown")
-    result.setdefault("color", "Unknown")
-    result.setdefault("type", "Unknown")
-    result.setdefault("features", [])
-
-    # ----------------------------------------------
-    # Ensure features is always a list
-    # ----------------------------------------------
-
-    if not isinstance(result["features"], list):
-        result["features"] = []
-
-    return result
-
-
-# --------------------------------------------------
-# 3. Local fallback for unclear results
-# --------------------------------------------------
+# ==================================================
+# 4. Unknown fallback
+# ==================================================
 
 def get_unknown_lost_found_result():
     """
-    Return a safe fallback when the image cannot be
-    identified reliably.
+    Return a safe fallback for unclear images.
     """
 
     return {
@@ -99,28 +97,83 @@ def get_unknown_lost_found_result():
     }
 
 
-# --------------------------------------------------
-# 4. Validate extracted attributes
-# --------------------------------------------------
+# ==================================================
+# 5. Parse AI response
+# ==================================================
+
+def parse_lost_found_result(response_text):
+    """
+    Convert Gemini JSON response into a Python dictionary.
+    """
+
+    try:
+        result = json.loads(response_text)
+
+    except json.JSONDecodeError as e:
+        raise ValueError(
+            f"Invalid Lost & Found AI JSON: {e}"
+        )
+
+    result.setdefault(
+        "object",
+        "Unknown"
+    )
+
+    result.setdefault(
+        "color",
+        "Unknown"
+    )
+
+    result.setdefault(
+        "type",
+        "Unknown"
+    )
+
+    result.setdefault(
+        "features",
+        []
+    )
+
+    if not isinstance(
+        result["features"],
+        list
+    ):
+        result["features"] = []
+
+    return result
+
+
+# ==================================================
+# 6. Validate AI result
+# ==================================================
 
 def validate_lost_found_result(result):
     """
-    Validate and normalize a Lost & Found AI result.
-
-    Args:
-        result (dict): AI-generated attributes.
-
-    Returns:
-        dict: Safe normalized result.
+    Validate and normalize AI-generated attributes.
     """
 
     if not isinstance(result, dict):
         return get_unknown_lost_found_result()
 
-    object_name = result.get("object", "Unknown")
-    color = result.get("color", "Unknown")
-    item_type = result.get("type", "Unknown")
-    features = result.get("features", [])
+    object_name = result.get(
+        "object",
+        "Unknown"
+    )
+
+    color = result.get(
+        "color",
+        "Unknown"
+    )
+
+    item_type = result.get(
+        "type",
+        "Unknown"
+    )
+
+    features = result.get(
+        "features",
+        []
+    )
 
     if not object_name:
         object_name = "Unknown"
@@ -134,59 +187,193 @@ def validate_lost_found_result(result):
     if not isinstance(features, list):
         features = []
 
-    # Keep only string features
-    features = [
-        str(feature).strip()
-        for feature in features
-        if str(feature).strip()
-    ]
+    clean_features = []
+
+    for feature in features:
+
+        feature = str(
+            feature
+        ).strip()
+
+        if feature:
+            clean_features.append(
+                feature
+            )
 
     return {
-        "object": str(object_name).strip(),
-        "color": str(color).strip(),
-        "type": str(item_type).strip(),
-        "features": features
+        "object": str(
+            object_name
+        ).strip(),
+
+        "color": str(
+            color
+        ).strip(),
+
+        "type": str(
+            item_type
+        ).strip(),
+
+        "features": clean_features
     }
 
 
-# --------------------------------------------------
-# 5. Build a searchable description
-# --------------------------------------------------
+# ==================================================
+# 7. Analyze Lost & Found image
+# ==================================================
+
+def analyze_lost_found_item(image_path):
+    """
+    Analyze a Lost & Found image using Gemini.
+
+    Args:
+        image_path (str):
+            Path to uploaded image.
+
+    Returns:
+        dict:
+            object
+            color
+            type
+            features
+    """
+
+    # ----------------------------------------------
+    # Open and validate image
+    # ----------------------------------------------
+
+    try:
+        image = Image.open(
+            image_path
+        )
+
+    except FileNotFoundError:
+        raise FileNotFoundError(
+            f"Image not found: {image_path}"
+        )
+
+    except Exception as e:
+        raise ValueError(
+            f"Unable to open or validate image: {e}"
+        )
+
+    try:
+
+        # ------------------------------------------
+        # Send image to Gemini
+        # ------------------------------------------
+
+        response = client.models.generate_content(
+            model="gemini-3.6-flash",
+
+            contents=[
+                LOST_FOUND_PROMPT,
+                image
+            ],
+
+            config={
+                "response_mime_type": "application/json",
+
+                "response_schema": {
+                    "type": "object",
+
+                    "properties": {
+
+                        "object": {
+                            "type": "string"
+                        },
+
+                        "color": {
+                            "type": "string"
+                        },
+
+                        "type": {
+                            "type": "string"
+                        },
+
+                        "features": {
+                            "type": "array",
+
+                            "items": {
+                                "type": "string"
+                            }
+                        }
+                    },
+
+                    "required": [
+                        "object",
+                        "color",
+                        "type",
+                        "features"
+                    ]
+                }
+            }
+        )
+
+        # ------------------------------------------
+        # Parse JSON response
+        # ------------------------------------------
+
+        result = parse_lost_found_result(
+            response.text
+        )
+
+        # ------------------------------------------
+        # Validate result
+        # ------------------------------------------
+
+        return validate_lost_found_result(
+            result
+        )
+
+    finally:
+
+        # ------------------------------------------
+        # Always close image
+        # ------------------------------------------
+
+        image.close()
+
+
+# ==================================================
+# 8. Build searchable text
+# ==================================================
 
 def build_search_text(result):
     """
-    Build normalized text from extracted Lost & Found
-    attributes for later matching.
-
-    Args:
-        result (dict): Validated AI result.
-
-    Returns:
-        str: Searchable text.
+    Build searchable text from AI attributes.
     """
 
-    result = validate_lost_found_result(result)
+    result = validate_lost_found_result(
+        result
+    )
 
     parts = [
         result["object"],
         result["color"],
-        result["type"],
-        *result["features"]
+        result["type"]
+    ]
+
+    parts.extend(
+        result["features"]
+    )
+
+    clean_parts = [
+        part
+        for part in parts
+        if part
+        and part.lower() != "unknown"
     ]
 
     return " ".join(
-        part for part in parts
-        if part and part.lower() != "unknown"
+        clean_parts
     ).strip()
 
 
-# --------------------------------------------------
-# 6. Local tests
-# --------------------------------------------------
+# ==================================================
+# 9. Local helper test
+# ==================================================
 
 def main():
-
-    print("Lost & Found AI module loaded successfully.")
 
     sample = {
         "object": "backpack",
@@ -199,13 +386,28 @@ def main():
         ]
     }
 
-    validated = validate_lost_found_result(sample)
+    validated = validate_lost_found_result(
+        sample
+    )
+
+    print(
+        "Lost & Found AI module loaded successfully."
+    )
 
     print("\nValidated Result:")
-    print(json.dumps(validated, indent=4))
+    print(
+        json.dumps(
+            validated,
+            indent=4
+        )
+    )
 
     print("\nSearch Text:")
-    print(build_search_text(validated))
+    print(
+        build_search_text(
+            validated
+        )
+    )
 
     print("\nUnknown Fallback:")
     print(
@@ -216,9 +418,9 @@ def main():
     )
 
 
-# --------------------------------------------------
-# 7. Run local test only when executed directly
-# --------------------------------------------------
+# ==================================================
+# 10. Run local test
+# ==================================================
 
 if __name__ == "__main__":
     main()
