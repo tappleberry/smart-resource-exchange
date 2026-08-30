@@ -1,36 +1,83 @@
 <!DOCTYPE html>
+
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
     <title>Marketplace</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='css/style.css') }}">
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
 </head>
+
 
 <body>
 
+    <!-- ==================================================
+         Header
+         ================================================== -->
+
     <header class="top">
-        <div class="logo">CampusMart</div>
+
+        <div class="logo">
+            CampusMart
+        </div>
 
         <nav>
-            <a href="{{ url_for('home_page') }}">Home</a>
-            <a href="{{ url_for('marketplace') }}">Marketplace</a>
-            <a href="{{ url_for('sell') }}">Sell/Rent</a>
-            <a href="{{ url_for('lost_found') }}">Lost and Found</a>
+
+            <a href="{{ url_for('home_page') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('marketplace') }}">
+                Marketplace
+            </a>
+
+            <a href="{{ url_for('sell') }}">
+                Sell/Rent
+            </a>
+
+            <a href="{{ url_for('lost_found') }}">
+                Lost and Found
+            </a>
+
         </nav>
 
-        <button class="login-btn">Login</button>
+        <button class="login-btn">
+            Login
+        </button>
+
     </header>
 
 
+    <!-- ==================================================
+         Main Content
+         ================================================== -->
+
     <main>
 
-        <!-- Search & Filters -->
-        <form action="{{ url_for('search') }}" method="GET">
+
+        <!-- ==================================================
+             Search & Filters
+             ================================================== -->
+
+        <form
+            action="{{ url_for('search') }}"
+            method="GET"
+        >
 
             <!-- Search query -->
+
             <input
                 type="text"
                 name="q"
@@ -38,48 +85,71 @@
                 value="{{ request.args.get('q', '') }}"
             >
 
-            <!-- Category -->
-            <select class="categories" name="category">
 
-                <option value="">All categories</option>
+            <!-- Category -->
+
+            <select
+                class="categories"
+                name="category"
+            >
+
+                <option value="">
+                    All categories
+                </option>
 
                 {% for category in categories %}
+
                     <option
                         value="{{ category['category'] }}"
                         {% if request.args.get('category') == category['category'] %}
                             selected
                         {% endif %}
                     >
+
                         {{ category['category'] }}
+
                     </option>
+
                 {% endfor %}
 
             </select>
 
 
             <!-- Listing type -->
+
             <select name="listing_type">
 
-                <option value="">All listing types</option>
+                <option value="">
+                    All listing types
+                </option>
 
                 <option
                     value="sell"
-                    {% if request.args.get('listing_type') == 'sell' %}selected{% endif %}
+                    {% if request.args.get('listing_type') == 'sell' %}
+                        selected
+                    {% endif %}
                 >
+
                     Sell
+
                 </option>
 
                 <option
                     value="rent"
-                    {% if request.args.get('listing_type') == 'rent' %}selected{% endif %}
+                    {% if request.args.get('listing_type') == 'rent' %}
+                        selected
+                    {% endif %}
                 >
+
                     Rent
+
                 </option>
 
             </select>
 
 
             <!-- Minimum price -->
+
             <input
                 type="number"
                 name="min_price"
@@ -90,6 +160,7 @@
 
 
             <!-- Maximum price -->
+
             <input
                 type="number"
                 name="max_price"
@@ -100,80 +171,184 @@
 
 
             <!-- Condition -->
+
             <select name="condition">
 
-                <option value="">All conditions</option>
+                <option value="">
+                    All conditions
+                </option>
 
                 <option
                     value="new"
-                    {% if request.args.get('condition') == 'new' %}selected{% endif %}
+                    {% if request.args.get('condition') == 'new' %}
+                        selected
+                    {% endif %}
                 >
+
                     New
+
                 </option>
 
                 <option
                     value="used"
-                    {% if request.args.get('condition') == 'used' %}selected{% endif %}
+                    {% if request.args.get('condition') == 'used' %}
+                        selected
+                    {% endif %}
                 >
+
                     Used
+
                 </option>
 
             </select>
 
 
-            <button class="search" type="submit">
+            <!-- Search button -->
+
+            <button
+                class="search"
+                type="submit"
+            >
+
                 Search
+
             </button>
 
         </form>
-        <!-- Marketplace Items -->
+
+
+        <!-- ==================================================
+             Demand Intelligence
+             ================================================== -->
+
+        <section id="demand-section">
+
+            <h2>
+                Category Demand
+            </h2>
+
+            <div id="demand-results">
+
+                <p>
+                    Loading demand insights...
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- ==================================================
+             Marketplace Items
+             ================================================== -->
+
         <section class="products">
 
             {% for product in products %}
 
                 <div class="product-card">
 
+
+                    <!-- Product image -->
+
                     {% if product['image_path'] %}
+
                         <img
-                            src="{{ url_for('static', filename=product['image_path']) }}"
+                            src="{{ url_for(
+                                'static',
+                                filename=product['image_path']
+                            ) }}"
                             alt="{{ product['title'] }}"
                         >
+
                     {% endif %}
 
-                    <h3>{{ product['title'] }}</h3>
 
-                    <p>{{ product['description'] }}</p>
+                    <!-- Product title -->
 
-                    <p>
-                        Category: {{ product['category'] }}
-                    </p>
+                    <h3>
+                        {{ product['title'] }}
+                    </h3>
 
-                    <p>
-                        Type: {{ product['listing_type'] }}
-                    </p>
+
+                    <!-- Product description -->
 
                     <p>
-                        Condition: {{ product['condition'] }}
+                        {{ product['description'] }}
                     </p>
+
+
+                    <!-- Category -->
 
                     <p>
-                        Price: ₹{{ product['price'] }}
+                        Category:
+                        {{ product['category'] }}
                     </p>
 
-                    <a href="{{ url_for('product', item_id=product['id']) }}">
+
+                    <!-- Listing type -->
+
+                    <p>
+                        Type:
+                        {{ product['listing_type'] }}
+                    </p>
+
+
+                    <!-- Condition -->
+
+                    <p>
+                        Condition:
+                        {{ product['condition'] }}
+                    </p>
+
+
+                    <!-- Price -->
+
+                    <p>
+                        Price:
+                        ₹{{ product['price'] }}
+                    </p>
+
+
+                    <!-- Details -->
+
+                    <a
+                        href="{{ url_for(
+                            'product',
+                            item_id=product['id']
+                        ) }}"
+                    >
+
                         View Details
+
                     </a>
+
 
                 </div>
 
             {% else %}
 
-                <p>No items found.</p>
+                <p>
+                    No items found.
+                </p>
 
             {% endfor %}
 
         </section>
+
+
     </main>
 
+
+    <!-- ==================================================
+         JavaScript
+         ================================================== -->
+
+    <script
+        src="{{ url_for('static', filename='js/main.js') }}"
+    ></script>
+
+
 </body>
+
 </html>

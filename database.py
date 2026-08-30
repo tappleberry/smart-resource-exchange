@@ -585,13 +585,16 @@ def get_category_feature_data():
     Combine category-wise searches, views, favorites,
     and available listings.
 
+    Known marketplace categories are also included even
+    when their current database activity is zero.
+
     Returns:
         List of dictionaries with:
-        - category
-        - searches
-        - views
-        - favorites
-        - listings
+            - category
+            - searches
+            - views
+            - favorites
+            - listings
     """
 
     connection = get_connection()
@@ -599,19 +602,24 @@ def get_category_feature_data():
     try:
         cursor = connection.execute(
             """
-            SELECT
-                categories.category,
+            WITH known_categories(category) AS (
+                VALUES
+                    ('Electronics'),
+                    ('Books'),
+                    ('Cycles'),
+                    ('Hostel Essentials'),
+                    ('Lab Equipment'),
+                    ('Furniture'),
+                    ('Clothing'),
+                    ('Sports Equipment')
+            ),
 
-                COALESCE(search_data.searches, 0) AS searches,
+            categories AS (
+                SELECT category
+                FROM known_categories
 
-                COALESCE(interaction_data.views, 0) AS views,
+                UNION
 
-                COALESCE(interaction_data.favorites, 0) AS favorites,
-
-                COALESCE(supply_data.listings, 0) AS listings
-
-            FROM
-            (
                 SELECT category
                 FROM items
                 WHERE category IS NOT NULL
@@ -621,22 +629,18 @@ def get_category_feature_data():
                 SELECT category
                 FROM searches
                 WHERE category IS NOT NULL
-            ) AS categories
+            ),
 
-            LEFT JOIN
-            (
+            search_data AS (
                 SELECT
                     category,
                     COUNT(*) AS searches
                 FROM searches
                 WHERE category IS NOT NULL
                 GROUP BY category
-            ) AS search_data
+            ),
 
-            ON categories.category = search_data.category
-
-            LEFT JOIN
-            (
+            interaction_data AS (
                 SELECT
                     items.category,
 
@@ -662,30 +666,66 @@ def get_category_feature_data():
                     ON items.id = interactions.item_id
 
                 GROUP BY items.category
+            ),
 
-            ) AS interaction_data
-
-            ON categories.category = interaction_data.category
-
-            LEFT JOIN
-            (
+            supply_data AS (
                 SELECT
                     category,
                     COUNT(*) AS listings
                 FROM items
                 WHERE status = 'available'
                 GROUP BY category
-            ) AS supply_data
+            )
 
-            ON categories.category = supply_data.category
+            SELECT
+                categories.category,
 
-            ORDER BY LOWER(categories.category)
+                COALESCE(
+                    search_data.searches,
+                    0
+                ) AS searches,
+
+                COALESCE(
+                    interaction_data.views,
+                    0
+                ) AS views,
+
+                COALESCE(
+                    interaction_data.favorites,
+                    0
+                ) AS favorites,
+
+                COALESCE(
+                    supply_data.listings,
+                    0
+                ) AS listings
+
+            FROM categories
+
+            LEFT JOIN search_data
+                ON LOWER(categories.category)
+                = LOWER(search_data.category)
+
+            LEFT JOIN interaction_data
+                ON LOWER(categories.category)
+                = LOWER(interaction_data.category)
+
+            LEFT JOIN supply_data
+                ON LOWER(categories.category)
+                = LOWER(supply_data.category)
+
+            ORDER BY LOWER(
+                categories.category
+            )
             """
         )
 
         rows = cursor.fetchall()
 
-        return [dict(row) for row in rows]
+        return [
+            dict(row)
+            for row in rows
+        ]
 
     finally:
         connection.close()

@@ -6,10 +6,13 @@ from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
 
 import database
+
 from ai.vision import analyze_item
 from ai.lost_found import analyze_lost_found_item
 from ai.matching import find_best_matches
+
 from ml.pricing import suggest_price_from_ai_result
+from ml.demand import predict_category_demand
 
 
 # ==================================================
@@ -24,6 +27,7 @@ app = Flask(__name__)
 # ==================================================
 
 PROJECT_ROOT = Path(__file__).resolve().parent
+
 UPLOAD_FOLDER = PROJECT_ROOT / "uploads"
 
 ALLOWED_EXTENSIONS = {
@@ -33,7 +37,9 @@ ALLOWED_EXTENSIONS = {
     "webp"
 }
 
-UPLOAD_FOLDER.mkdir(exist_ok=True)
+UPLOAD_FOLDER.mkdir(
+    exist_ok=True
+)
 
 
 # ==================================================
@@ -41,12 +47,18 @@ UPLOAD_FOLDER.mkdir(exist_ok=True)
 # ==================================================
 
 def is_allowed_file(filename):
-    """Check whether uploaded file has an allowed extension."""
+    """
+    Check whether uploaded file has
+    an allowed extension.
+    """
 
     if "." not in filename:
         return False
 
-    extension = filename.rsplit(".", 1)[-1].lower()
+    extension = filename.rsplit(
+        ".",
+        1
+    )[-1].lower()
 
     return extension in ALLOWED_EXTENSIONS
 
@@ -58,7 +70,9 @@ def is_allowed_file(filename):
 @app.route("/")
 def home_page():
 
-    return render_template("index.html")
+    return render_template(
+        "index.html"
+    )
 
 
 # ==================================================
@@ -69,6 +83,7 @@ def home_page():
 def marketplace():
 
     products = database.get_items()
+
     categories = database.get_categories()
 
     return render_template(
@@ -85,7 +100,9 @@ def marketplace():
 @app.route("/marketplace/item/<int:item_id>/")
 def product(item_id):
 
-    item = database.get_item(item_id)
+    item = database.get_item(
+        item_id
+    )
 
     if not item:
         return "Product Not found"
@@ -106,22 +123,41 @@ def search():
     query = request.args.get("q")
     category = request.args.get("category")
     listing_type = request.args.get("listing_type")
-    min_price = request.args.get("min_price")
-    max_price = request.args.get("max_price")
-    condition = request.args.get("condition")
+
+    min_price = request.args.get(
+        "min_price"
+    )
+
+    max_price = request.args.get(
+        "max_price"
+    )
+
+    condition = request.args.get(
+        "condition"
+    )
 
     # ----------------------------------------------
     # Convert prices from strings to numbers
     # ----------------------------------------------
 
     if min_price:
-        min_price = float(min_price)
+
+        min_price = float(
+            min_price
+        )
+
     else:
+
         min_price = None
 
     if max_price:
-        max_price = float(max_price)
+
+        max_price = float(
+            max_price
+        )
+
     else:
+
         max_price = None
 
     user_id = None
@@ -161,19 +197,71 @@ def trends():
 
 
 # ==================================================
+# Demand Prediction API
+# ==================================================
+
+@app.route(
+    "/api/demand/<category>/"
+)
+def demand_prediction(category):
+
+    try:
+
+        result = predict_category_demand(
+            category
+        )
+
+        # ------------------------------------------
+        # Category not available
+        # ------------------------------------------
+
+        if result is None:
+
+            return jsonify({
+                "success": False,
+                "error": (
+                    f"No demand data available "
+                    f"for category: {category}"
+                )
+            }), 404
+
+        # ------------------------------------------
+        # Return prediction
+        # ------------------------------------------
+
+        return jsonify({
+            "success": True,
+            "result": result
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+# ==================================================
 # AI Image Recognition
 # ==================================================
 
-@app.route("/api/analyze-item/", methods=["POST"])
+@app.route(
+    "/api/analyze-item/",
+    methods=["POST"]
+)
 def analyze_image():
 
     # ----------------------------------------------
     # Get uploaded image
     # ----------------------------------------------
 
-    image = request.files.get("image")
+    image = request.files.get(
+        "image"
+    )
 
     if image is None or image.filename == "":
+
         return jsonify({
             "success": False,
             "error": "No image uploaded"
@@ -190,6 +278,7 @@ def analyze_image():
         )
 
         if not filename:
+
             return jsonify({
                 "success": False,
                 "error": "Invalid filename"
@@ -199,7 +288,10 @@ def analyze_image():
         # Validate file type
         # ------------------------------------------
 
-        if not is_allowed_file(filename):
+        if not is_allowed_file(
+            filename
+        ):
+
             return jsonify({
                 "success": False,
                 "error": (
@@ -222,14 +314,17 @@ def analyze_image():
         )
 
         image_path = (
-            UPLOAD_FOLDER / unique_filename
+            UPLOAD_FOLDER
+            / unique_filename
         )
 
         # ------------------------------------------
         # Save uploaded image
         # ------------------------------------------
 
-        image.save(image_path)
+        image.save(
+            image_path
+        )
 
         # ------------------------------------------
         # Analyze image using Gemini
@@ -244,10 +339,13 @@ def analyze_image():
         # ------------------------------------------
 
         is_unclear_item = (
-            result.get("item_name") == "Unclear Item"
+            result.get("item_name")
+            == "Unclear Item"
             or (
-                result.get("category") == "Other"
-                and result.get("condition") == "Unknown"
+                result.get("category")
+                == "Other"
+                and result.get("condition")
+                == "Unknown"
             )
         )
 
@@ -264,10 +362,13 @@ def analyze_image():
             )
 
             if final_price is not None:
-                result["suggested_price"] = final_price
+
+                result["suggested_price"] = (
+                    final_price
+                )
 
         # ------------------------------------------
-        # Return final result
+        # Return result
         # ------------------------------------------
 
         return jsonify({
@@ -284,9 +385,12 @@ def analyze_image():
         # ------------------------------------------
 
         if (
-            "quota exceeded" in error_message.lower()
-            or "resource_exhausted" in error_message.lower()
-            or "429" in error_message
+            "quota exceeded"
+            in error_message.lower()
+            or "resource_exhausted"
+            in error_message.lower()
+            or "429"
+            in error_message
         ):
 
             return jsonify({
@@ -295,7 +399,7 @@ def analyze_image():
             }), 429
 
         # ------------------------------------------
-        # Handle all other errors
+        # Handle other errors
         # ------------------------------------------
 
         return jsonify({
@@ -311,14 +415,19 @@ def analyze_image():
 @app.route("/sell-rent/")
 def sell():
 
-    return render_template("sell.html")
+    return render_template(
+        "sell.html"
+    )
 
 
 # ==================================================
 # Add Item
 # ==================================================
 
-@app.route("/sell-rent/add/", methods=["POST"])
+@app.route(
+    "/sell-rent/add/",
+    methods=["POST"]
+)
 def add_item():
 
     data = request.get_json()
@@ -366,7 +475,10 @@ def lost_found():
 # Add Lost / Found Report
 # ==================================================
 
-@app.route("/lost_found/add/", methods=["POST"])
+@app.route(
+    "/lost_found/add/",
+    methods=["POST"]
+)
 def add_lost_found_item():
 
     try:
@@ -379,7 +491,11 @@ def add_lost_found_item():
 
             data = request.get_json()
 
-            if not isinstance(data, dict):
+            if not isinstance(
+                data,
+                dict
+            ):
+
                 data = {}
 
         else:
@@ -390,18 +506,36 @@ def add_lost_found_item():
         # Required fields
         # ------------------------------------------
 
-        user_id = data.get("user_id")
-        report_type = data.get("report_type")
-        title = data.get("title")
-        description = data.get("description")
-        category = data.get("category")
-        location = data.get("location")
+        user_id = data.get(
+            "user_id"
+        )
+
+        report_type = data.get(
+            "report_type"
+        )
+
+        title = data.get(
+            "title"
+        )
+
+        description = data.get(
+            "description"
+        )
+
+        category = data.get(
+            "category"
+        )
+
+        location = data.get(
+            "location"
+        )
 
         # ------------------------------------------
         # Validate required values
         # ------------------------------------------
 
         if not user_id:
+
             return jsonify({
                 "success": False,
                 "error": "user_id is required"
@@ -411,15 +545,17 @@ def add_lost_found_item():
             "lost",
             "found"
         }:
+
             return jsonify({
                 "success": False,
                 "error": (
-                    "report_type must be 'lost' "
-                    "or 'found'"
+                    "report_type must be "
+                    "'lost' or 'found'"
                 )
             }), 400
 
         if not title:
+
             return jsonify({
                 "success": False,
                 "error": "title is required"
@@ -431,13 +567,20 @@ def add_lost_found_item():
 
         try:
 
-            user_id = int(user_id)
+            user_id = int(
+                user_id
+            )
 
-        except (TypeError, ValueError):
+        except (
+            TypeError,
+            ValueError
+        ):
 
             return jsonify({
                 "success": False,
-                "error": "user_id must be an integer"
+                "error": (
+                    "user_id must be an integer"
+                )
             }), 400
 
         # ------------------------------------------
@@ -459,9 +602,14 @@ def add_lost_found_item():
         # Get uploaded image
         # ------------------------------------------
 
-        image = request.files.get("image")
+        image = request.files.get(
+            "image"
+        )
 
-        if image is not None and image.filename:
+        if (
+            image is not None
+            and image.filename
+        ):
 
             # --------------------------------------
             # Secure filename
@@ -475,20 +623,25 @@ def add_lost_found_item():
 
                 return jsonify({
                     "success": False,
-                    "error": "Invalid image filename"
+                    "error": (
+                        "Invalid image filename"
+                    )
                 }), 400
 
             # --------------------------------------
             # Validate extension
             # --------------------------------------
 
-            if not is_allowed_file(filename):
+            if not is_allowed_file(
+                filename
+            ):
 
                 return jsonify({
                     "success": False,
                     "error": (
-                        "Only PNG, JPG, JPEG and WEBP "
-                        "images are allowed"
+                        "Only PNG, JPG, JPEG "
+                        "and WEBP images "
+                        "are allowed"
                     )
                 }), 400
 
@@ -506,7 +659,8 @@ def add_lost_found_item():
             )
 
             saved_image_path = (
-                UPLOAD_FOLDER / unique_filename
+                UPLOAD_FOLDER
+                / unique_filename
             )
 
             # --------------------------------------
@@ -525,8 +679,10 @@ def add_lost_found_item():
             # Analyze Lost & Found image
             # --------------------------------------
 
-            ai_result = analyze_lost_found_item(
-                image_path
+            ai_result = (
+                analyze_lost_found_item(
+                    image_path
+                )
             )
 
             # --------------------------------------
@@ -556,18 +712,20 @@ def add_lost_found_item():
         # Create database report
         # ------------------------------------------
 
-        report_id = database.create_lost_found_report(
-            user_id=user_id,
-            report_type=report_type,
-            title=title,
-            description=description,
-            category=category,
-            image_path=image_path,
-            location=location,
-            ai_object=ai_object,
-            ai_color=ai_color,
-            ai_type=ai_type,
-            ai_features=ai_features
+        report_id = (
+            database.create_lost_found_report(
+                user_id=user_id,
+                report_type=report_type,
+                title=title,
+                description=description,
+                category=category,
+                image_path=image_path,
+                location=location,
+                ai_object=ai_object,
+                ai_color=ai_color,
+                ai_type=ai_type,
+                ai_features=ai_features
+            )
         )
 
         # ------------------------------------------
@@ -633,13 +791,19 @@ def add_lost_found_item():
 
             formatted_matches.append({
                 "report_id": report["id"],
-                "report_type": report["report_type"],
+                "report_type": (
+                    report["report_type"]
+                ),
                 "title": report["title"],
-                "description": report["description"],
+                "description": (
+                    report["description"]
+                ),
                 "category": report["category"],
                 "location": report["location"],
                 "score": match["score"],
-                "match_level": match["match_level"],
+                "match_level": (
+                    match["match_level"]
+                ),
                 "details": match["details"]
             })
 
@@ -663,9 +827,12 @@ def add_lost_found_item():
         # ------------------------------------------
 
         if (
-            "quota exceeded" in error_message.lower()
-            or "resource_exhausted" in error_message.lower()
-            or "429" in error_message
+            "quota exceeded"
+            in error_message.lower()
+            or "resource_exhausted"
+            in error_message.lower()
+            or "429"
+            in error_message
         ):
 
             return jsonify({
@@ -713,14 +880,19 @@ def lost_found_matches(report_id):
 
         return jsonify({
             "success": False,
-            "error": "Lost & Found report not found"
+            "error": (
+                "Lost & Found report not found"
+            )
         }), 404
 
     # ----------------------------------------------
     # Select opposite report type
     # ----------------------------------------------
 
-    if target_report["report_type"] == "lost":
+    if (
+        target_report["report_type"]
+        == "lost"
+    ):
 
         candidate_reports = (
             database.get_lost_found_reports(
@@ -758,13 +930,19 @@ def lost_found_matches(report_id):
 
         formatted_matches.append({
             "report_id": report["id"],
-            "report_type": report["report_type"],
+            "report_type": (
+                report["report_type"]
+            ),
             "title": report["title"],
-            "description": report["description"],
+            "description": (
+                report["description"]
+            ),
             "category": report["category"],
             "location": report["location"],
             "score": match["score"],
-            "match_level": match["match_level"],
+            "match_level": (
+                match["match_level"]
+            ),
             "details": match["details"]
         })
 
@@ -793,18 +971,32 @@ def lost_found_reports():
         result.append({
             "id": report["id"],
             "user_id": report["user_id"],
-            "report_type": report["report_type"],
+            "report_type": (
+                report["report_type"]
+            ),
             "title": report["title"],
-            "description": report["description"],
+            "description": (
+                report["description"]
+            ),
             "category": report["category"],
             "image_path": report["image_path"],
             "location": report["location"],
-            "reported_at": report["reported_at"],
+            "reported_at": (
+                report["reported_at"]
+            ),
             "status": report["status"],
-            "ai_object": report["ai_object"],
-            "ai_color": report["ai_color"],
-            "ai_type": report["ai_type"],
-            "ai_features": report["ai_features"]
+            "ai_object": (
+                report["ai_object"]
+            ),
+            "ai_color": (
+                report["ai_color"]
+            ),
+            "ai_type": (
+                report["ai_type"]
+            ),
+            "ai_features": (
+                report["ai_features"]
+            )
         })
 
     return jsonify({
@@ -843,7 +1035,9 @@ def create_products():
     }
 
 
-@app.route("/api/products/")
+@app.route(
+    "/api/products/"
+)
 def search_test():
 
     product = request.args.get(
