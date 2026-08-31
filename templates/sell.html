@@ -1,11 +1,535 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title></title>
+
+    <title>Sell / Rent - Smart Campus Hub</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        .sell-page {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .sell-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #334155;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 11px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            background: #ffffff;
+            color: #334155;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.08);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .image-upload {
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            background: #f8fafc;
+        }
+
+        .image-upload input {
+            border: none;
+            padding: 0;
+            background: transparent;
+        }
+
+        .image-preview {
+            display: none;
+            margin-top: 18px;
+        }
+
+        .image-preview img {
+            max-width: 280px;
+            max-height: 220px;
+            border-radius: 10px;
+            border: 1px solid #e2e8f0;
+            object-fit: contain;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .form-actions button,
+        .form-actions a {
+            padding: 11px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .submit-btn {
+            border: none;
+            background: #4f46e5;
+            color: #ffffff;
+        }
+
+        .submit-btn:hover {
+            background: #4338ca;
+        }
+
+        .cancel-btn {
+            border: 1px solid #cbd5e1;
+            background: #ffffff;
+            color: #475569;
+        }
+
+        .cancel-btn:hover {
+            background: #f1f5f9;
+        }
+
+        @media (max-width: 700px) {
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .sell-card {
+                padding: 20px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+
 </head>
+
+
 <body>
-    
+
+<div class="layout">
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <h2>Smart Campus Hub</h2>
+        </div>
+
+
+        <nav class="menu">
+
+            <a href="{{ url_for('home_page') }}"
+               class="menu-item">
+                Home
+            </a>
+
+            <a href="{{ url_for('marketplace') }}"
+               class="menu-item">
+                Marketplace
+            </a>
+
+            <a href="{{ url_for('sell') }}"
+               class="menu-item active">
+                Sell / Rent
+            </a>
+
+            <a href="{{ url_for('lost_found') }}"
+               class="menu-item">
+                Lost & Found
+            </a>
+
+        </nav>
+
+
+        <div class="help-box">
+
+            <h3>
+                List your unused items.
+            </h3>
+
+            <p>
+                Sell or rent useful items to other students on campus.
+            </p>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="content">
+
+
+        <!-- ================= HEADER ================= -->
+
+        <header class="top-header">
+
+            <div>
+
+                <h1>
+                    Sell / Rent an Item
+                </h1>
+
+                <p>
+                    List an item for other students on campus
+                </p>
+
+            </div>
+
+
+            <div class="search-profile">
+
+                <div class="profile-icon">
+                    👤
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ================= SELL FORM ================= -->
+
+        <div class="sell-page">
+
+            <div class="sell-card">
+
+
+                <form
+                    action="{{ url_for('add_item') }}"
+                    method="POST"
+                    enctype="multipart/form-data"
+                >
+
+
+                    <!-- Item Title -->
+
+                    <div class="form-group">
+
+                        <label for="title">
+                            Item Title
+                        </label>
+
+                        <input
+                            type="text"
+                            id="title"
+                            name="title"
+                            placeholder="e.g. Dell Laptop"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <!-- Description -->
+
+                    <div class="form-group">
+
+                        <label for="description">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            placeholder="Describe your item..."
+                            required
+                        ></textarea>
+
+                    </div>
+
+
+
+                    <!-- Category + Listing Type -->
+
+                    <div class="form-row">
+
+
+                        <div class="form-group">
+
+                            <label for="category">
+                                Category
+                            </label>
+
+                            <input
+                                type="text"
+                                id="category"
+                                name="category"
+                                placeholder="e.g. Books"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <div class="form-group">
+
+                            <label for="listing_type">
+                                Listing Type
+                            </label>
+
+                            <select
+                                id="listing_type"
+                                name="listing_type"
+                                required
+                            >
+
+                                <option value="">
+                                    Select type
+                                </option>
+
+                                <option value="sell">
+                                    Sell
+                                </option>
+
+                                <option value="rent">
+                                    Rent
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Price + Condition -->
+
+                    <div class="form-row">
+
+
+                        <div class="form-group">
+
+                            <label for="price">
+                                Price (₹)
+                            </label>
+
+                            <input
+                                type="number"
+                                id="price"
+                                name="price"
+                                min="0"
+                                step="1"
+                                placeholder="e.g. 500"
+                                required
+                            >
+
+                        </div>
+
+
+
+                        <div class="form-group">
+
+                            <label for="condition">
+                                Condition
+                            </label>
+
+                            <select
+                                id="condition"
+                                name="condition"
+                                required
+                            >
+
+                                <option value="">
+                                    Select condition
+                                </option>
+
+                                <option value="new">
+                                    New
+                                </option>
+
+                                <option value="used">
+                                    Used
+                                </option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Image -->
+
+                    <div class="form-group">
+
+                        <label for="image">
+                            Item Photo
+                        </label>
+
+
+                        <div class="image-upload">
+
+                            <input
+                                type="file"
+                                id="image"
+                                name="image"
+                                accept="image/png,image/jpeg,image/jpg,image/webp"
+                                required
+                            >
+
+
+                            <div
+                                class="image-preview"
+                                id="imagePreview"
+                            >
+
+                                <img
+                                    id="previewImage"
+                                    src="#"
+                                    alt="Selected item preview"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- Buttons -->
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="submit-btn"
+                        >
+                            List Item
+                        </button>
+
+
+                        <a
+                            href="{{ url_for('marketplace') }}"
+                            class="cancel-btn"
+                        >
+                            Cancel
+                        </a>
+
+                    </div>
+
+
+                </form>
+
+            </div>
+
+        </div>
+
+
+    </main>
+
+</div>
+
+
+
+<!-- ================= IMAGE PREVIEW ================= -->
+
+<script>
+
+    const imageInput =
+        document.getElementById("image");
+
+    const imagePreview =
+        document.getElementById("imagePreview");
+
+    const previewImage =
+        document.getElementById("previewImage");
+
+
+    imageInput.addEventListener("change", function () {
+
+        const file = this.files[0];
+
+
+        if (!file) {
+
+            imagePreview.style.display = "none";
+
+            previewImage.src = "#";
+
+            return;
+        }
+
+
+        if (!file.type.startsWith("image/")) {
+
+            imageInput.value = "";
+
+            imagePreview.style.display = "none";
+
+            previewImage.src = "#";
+
+            alert("Please select an image file.");
+
+            return;
+        }
+
+
+        previewImage.src =
+            URL.createObjectURL(file);
+
+        imagePreview.style.display = "block";
+
+    });
+
+</script>
+
+
 </body>
+
 </html>

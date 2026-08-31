@@ -3,29 +3,482 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>lost and found</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-</head>
-<body>
-    <header class="top">
-        <div class="logo">CampusMart</div>
-        <nav>
-            <a href="{{ url_for('home_page') }}">Home</a>
-            <a href="{{ url_for('marketplace') }}">Marketplace</a>
-            <a href="{{ url_for('sell') }}">Sell/Rent</a>
-            <a href="{{ url_for('lost_found') }}">Lost and Found</a>
-         </nav>
-         <button class="login-btn">Login</button>
 
-    </header>
-    <main>
-        <h1>Lost & Found</h1>
-        <p1>report or find lost item in your campus</p1><br>
-        <buttons class="lost-btn">
-            <button>All items</button>
-            <button>Lost</button>
-            <button>Found</button>
-        </buttons>
+    <title>Lost & Found - Smart Campus Hub</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+
+<div class="layout">
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <h2>Smart Campus Hub</h2>
+        </div>
+
+        <nav class="menu">
+
+            <a href="/" class="menu-item">
+                Home
+            </a>
+
+            <a href="/marketplace/" class="menu-item">
+                Marketplace
+            </a>
+
+            <a href="/sell-rent/" class="menu-item">
+                Sell / Rent
+            </a>
+
+            <a href="/lost_found/" class="menu-item active">
+                Lost & Found
+            </a>
+
+        </nav>
+
+
+        <!-- Report buttons -->
+
+       <div class="help-box">
+
+            <h3>
+                Help someone find what they've lost!
+            </h3>
+
+            <p>
+                Report lost items or help others by reporting found items.
+            </p>
+
+            <div class="help-actions">
+
+                <a href="/lost_found/report/lost"
+                class="btn btn-primary">
+                    Report Lost Item
+                </a>
+
+                <a href="/lost_found/report/found"
+                class="btn btn-secondary">
+                    Report Found Item
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="content">
+
+
+        <!-- Header -->
+
+        <header class="top-header">
+
+            <div>
+
+                <h1>
+                    Lost & Found
+                </h1>
+
+                <p>
+                    Report lost items or help others by reporting found items.
+                </p>
+
+            </div>
+
+
+            <!-- SEARCH PLACEHOLDER -->
+
+            <div class="search-profile">
+
+                <form action="/lost_found/" method="GET">
+
+                    <input
+                        type="text"
+                        name="search"
+                        placeholder="Search lost or found items..."
+                        class="search-bar"
+                        value="{{ search|default('', true) }}"
+                    >
+
+                </form>
+
+
+                <div class="profile-icon">
+
+                    <svg
+                        width="20"
+                        height="20"
+                        fill="currentColor"
+                        viewBox="0 0 24 24">
+
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4
+                        1.79-4 4 1.79 4 4 4zm0 2c-2.67
+                        0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ================= STATISTICS ================= -->
+
+        <div class="stats-row">
+
+
+            <!-- LOST COUNT -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon lost-icon">
+
+                    <svg
+                        width="24"
+                        height="24"
+                        fill="currentColor"
+                        viewBox="0 0 24 24">
+
+                        <path d="M12 2C6.48 2 2 6.48 2
+                        12s4.48 10 10 10 10-4.48
+                        10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+
+                    </svg>
+
+                </div>
+
+                <div class="stat-info">
+
+                    <!-- DATABASE VALUE -->
+
+                    <h2>
+                        {{ lost_count|default(0, true) }}
+                    </h2>
+
+                    <p>
+                        Lost Items
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- FOUND COUNT -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon found-icon">
+
+                    <svg
+                        width="24"
+                        height="24"
+                        fill="currentColor"
+                        viewBox="0 0 24 24">
+
+                        <path d="M12 2C6.48 2 2 6.48 2
+                        12s4.48 10 10 10 10-4.48
+                        10-10S17.52 2 12 2zm-2
+                        15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+
+                    </svg>
+
+                </div>
+
+                <div class="stat-info">
+
+                    <!-- DATABASE VALUE -->
+
+                    <h2>
+                        {{ found_count|default(0, true) }}
+                    </h2>
+
+                    <p>
+                        Found Items
+                    </p>
+
+                </div>
+
+            </div>
+
+
+
+            <!-- POSSIBLE MATCHES -->
+
+            <div class="stat-card">
+
+                <div class="stat-icon match-icon">
+
+                    <svg
+                        width="24"
+                        height="24"
+                        fill="currentColor"
+                        viewBox="0 0 24 24">
+
+                        <path d="M16 11c1.66 0 2.99-1.34
+                        2.99-3S17.66 5 16 5c-1.66
+                        0-3 1.34-3 3s1.34 3 3 3zm-8
+                        0c1.66 0 2.99-1.34 2.99-3S9.66
+                        5 8 5C6.34 5 5 6.34 5 8s1.34
+                        3 3 3zm0 2c-2.33 0-7 1.17-7
+                        3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8
+                        0c-.29 0-.62.02-.97.05 1.16.84
+                        1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+
+                    </svg>
+
+                </div>
+
+                <div class="stat-info">
+
+                    <!--
+                        PLACEHOLDER FOR MATCHING SYSTEM.
+
+                        Later app.py can send:
+
+                        match_count=...
+
+                        Until then this displays 0.
+                    -->
+
+                    <h2>
+                        {{ match_count|default(0, true) }}
+                    </h2>
+
+                    <p>
+                        Possible Matches
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+
+        <!-- ================= REPORTS ================= -->
+
+        <div class="reports-section">
+
+
+            <div class="tabs">
+
+                <button class="tab active">
+                    All Reports
+                </button>
+
+            </div>
+
+
+
+            <div class="report-list">
+
+
+                <!-- ================= DATABASE LOOP ================= -->
+
+                {% for report in reports %}
+
+
+                <div class="report-item">
+
+
+                    <!-- IMAGE -->
+
+                    <div class="report-img">
+
+                        {% if report.image_path %}
+
+                            <img
+                                src="{{ report.image_path }}"
+                                alt="{{ report.title }}"
+                            >
+
+                        {% else %}
+
+                            <div class="no-img">
+
+                                <svg
+                                    width="32"
+                                    height="32"
+                                    fill="#d1d5db"
+                                    viewBox="0 0 24 24">
+
+                                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1
+                                    0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1
+                                    0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5
+                                    12l4.5 6H5l3.5-4.5z"/>
+
+                                </svg>
+
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+
+                    <!-- REPORT INFORMATION -->
+
+                    <div class="report-details">
+
+
+                        <div class="report-title-row">
+
+
+                            <!-- DATABASE -->
+
+                            <h3>
+                                {{ report.title }}
+                            </h3>
+
+
+                            <!-- LOST / FOUND -->
+
+                            {% if report.report_type|lower == 'lost' %}
+
+                                <span class="badge badge-lost">
+                                    Lost
+                                </span>
+
+                            {% else %}
+
+                                <span class="badge badge-found">
+                                    Found
+                                </span>
+
+                            {% endif %}
+
+
+                        </div>
+
+
+
+                        <!-- DESCRIPTION -->
+
+                        <p class="desc">
+
+                            {{ report.description }}
+
+                        </p>
+
+
+
+                        <!-- META INFORMATION -->
+
+                        <div class="meta-info">
+
+
+                            <span>
+
+                                📍 {{ report.location }}
+
+                            </span>
+
+
+                            <span>
+
+                                📅
+
+                                {% if report.reported_at %}
+
+                                    {{ report.reported_at }}
+
+                                {% else %}
+
+                                    Unknown Date
+
+                                {% endif %}
+
+                            </span>
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <!-- ================= ACTIONS ================= -->
+
+                    <div class="report-actions">
+
+
+                        <!--
+                            PLACEHOLDER FOR DETAILS PAGE.
+
+                            Later create a route such as:
+
+                            /lost_found/<id>
+
+                            Then this link will work.
+                        -->
+
+                        <a
+                            href="/lost_found/{{ report.id }}"
+                            class="btn-outline">
+
+                            View Details
+
+                        </a>
+
+
+                    </div>
+
+
+                </div>
+
+
+                {% endfor %}
+
+
+
+                <!-- ================= EMPTY DATABASE ================= -->
+
+                {% if not reports %}
+
+                <div class="report-item">
+
+                    <div class="report-details">
+
+                        <h3>
+                            No reports found
+                        </h3>
+
+                        <p class="desc">
+                            There are currently no lost or found item reports.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                {% endif %}
+
+
+            </div>
+
+        </div>
+
     </main>
+
+</div>
+
 </body>
 </html>
