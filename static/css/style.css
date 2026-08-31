@@ -263,3 +263,181 @@ a {
 .demand-card strong {
     font-weight: bold;
 }
+
+/* ==================================================
+   Seller Recommendations
+   ================================================== */
+
+#recommendation-section {
+    margin: 25px 0;
+    padding: 20px;
+    background-color: rgb(247, 242, 247);
+    border: 1px solid rgb(227, 220, 235);
+    border-radius: 12px;
+}
+
+#recommendation-section h2 {
+    margin-bottom: 15px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 28px;
+}
+
+#recommendation-results {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(250px, 1fr)
+    );
+    gap: 18px;
+}
+
+.recommendation-card {
+    padding: 18px;
+    background-color: white;
+    border: 1px solid rgb(225, 218, 230);
+    border-radius: 12px;
+    box-shadow: 2px 2px 5px gray;
+}
+
+.recommendation-card h3 {
+    margin-bottom: 12px;
+    color: blueviolet;
+    font-size: 20px;
+}
+
+.recommendation-card p {
+    margin-bottom: 8px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    line-height: 1.4;
+}
+
+.recommendation-card strong {
+    font-weight: bold;
+}
+
+/* ==================================================
+   Demand Intelligence Dashboard
+   ================================================== */
+
+#demand-dashboard {
+    padding: 30px 40px;
+    background-color: rgb(247, 242, 247);
+    min-height: 100vh;
+}
+
+#demand-dashboard > h1 {
+    margin-bottom: 8px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 34px;
+}
+
+#demand-dashboard > p {
+    margin-bottom: 25px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 16px;
+}
+
+
+/* ==================================================
+   Summary Cards
+   ================================================== */
+
+#demand-summary {
+    display: grid;
+    grid-template-columns: repeat(
+        4,
+        1fr
+    );
+    gap: 20px;
+    margin-bottom: 25px;
+}
+
+.summary-card {
+    padding: 20px;
+    background-color: white;
+    border: 1px solid rgb(225, 218, 230);
+    border-radius: 14px;
+    box-shadow: 2px 2px 6px gray;
+}
+
+.summary-card h3 {
+    margin-bottom: 12px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 17px;
+}
+
+.summary-card p {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 30px;
+    font-weight: bold;
+}
+
+
+/* ==================================================
+   Dashboard Cards
+   ================================================== */
+
+.dashboard-card {
+    margin-bottom: 25px;
+    padding: 22px;
+    background-color: white;
+    border: 1px solid rgb(225, 218, 230);
+    border-radius: 14px;
+    box-shadow: 2px 2px 6px gray;
+}
+
+.dashboard-card h2 {
+    margin-bottom: 18px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 25px;
+}
+
+
+/* ==================================================
+   Chart
+   ================================================== */
+
+.chart-container {
+    position: relative;
+    width: 100%;
+    height: 380px;
+}
+
+
+/* ==================================================
+   Dashboard Recommendations
+   ================================================== */
+
+#dashboard-recommendation-results {
+    display: grid;
+    grid-template-columns: repeat(
+        auto-fit,
+        minmax(250px, 1fr)
+    );
+    gap: 18px;
+}
+
+#dashboard-recommendation-results
+.recommendation-card {
+    padding: 18px;
+    background-color: white;
+    border: 1px solid rgb(225, 218, 230);
+    border-radius: 12px;
+    box-shadow: 2px 2px 5px gray;
+}
+
+#dashboard-recommendation-results
+.recommendation-card h3 {
+    margin-bottom: 12px;
+    color: blueviolet;
+    font-size: 20px;
+}
+
+#dashboard-recommendation-results
+.recommendation-card p {
+    margin-bottom: 8px;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    line-height: 1.4;
+}

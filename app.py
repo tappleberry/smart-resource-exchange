@@ -13,6 +13,7 @@ from ai.matching import find_best_matches
 
 from ml.pricing import suggest_price_from_ai_result
 from ml.demand import predict_category_demand
+from ml.recommend import get_category_recommendations
 
 
 # ==================================================
@@ -91,6 +92,18 @@ def marketplace():
         products=products,
         categories=categories
     )
+
+# ==================================================
+# Demand Intelligence Dashboard
+# ==================================================
+
+@app.route("/dashboard/")
+def dashboard():
+
+    return render_template(
+        "dashboard.html"
+    )
+
 
 
 # ==================================================
@@ -194,6 +207,42 @@ def search():
 def trends():
 
     return database.get_search_demand()
+
+# ==================================================
+# Recommendations API
+# ==================================================
+
+@app.route("/api/recommendations/")
+def recommendations():
+
+    categories = [
+        "Electronics",
+        "Books",
+        "Cycles",
+        "Hostel Essentials",
+        "Lab Equipment",
+        "Furniture",
+        "Clothing",
+        "Sports Equipment"
+    ]
+
+    try:
+
+        results = get_category_recommendations(
+            categories
+        )
+
+        return jsonify({
+            "success": True,
+            "recommendations": results
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
 
 
 # ==================================================

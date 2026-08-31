@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Demand Intelligence</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+    <!-- ==================================================
+         Header
+         ================================================== -->
+
+    <header class="top">
+
+        <div class="logo">
+            CampusMart
+        </div>
+
+        <nav>
+
+            <a href="{{ url_for('home_page') }}">
+                Home
+            </a>
+
+            <a href="{{ url_for('marketplace') }}">
+                Marketplace
+            </a>
+
+            <a href="{{ url_for('sell') }}">
+                Sell/Rent
+            </a>
+
+            <a href="{{ url_for('lost_found') }}">
+                Lost and Found
+            </a>
+
+        </nav>
+
+        <button class="login-btn">
+            Login
+        </button>
+
+    </header>
+
+
+    <!-- ==================================================
+         Main Dashboard
+         ================================================== -->
+
+    <main>
+
+        <section id="demand-dashboard">
+
+            <h1>
+                Demand Intelligence
+            </h1>
+
+            <p>
+                AI-powered marketplace demand insights
+                and seller opportunities.
+            </p>
+
+
+            <!-- ==========================================
+                 Demand Summary
+                 ========================================== -->
+
+            <section id="demand-summary">
+
+                <div class="summary-card">
+
+                    <h3>
+                        High Demand
+                    </h3>
+
+                    <p id="high-demand-count">
+                        0
+                    </p>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <h3>
+                        Medium Demand
+                    </h3>
+
+                    <p id="medium-demand-count">
+                        0
+                    </p>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <h3>
+                        Low Demand
+                    </h3>
+
+                    <p id="low-demand-count">
+                        0
+                    </p>
+
+                </div>
+
+
+                <div class="summary-card">
+
+                    <h3>
+                        Recommended Categories
+                    </h3>
+
+                    <p id="recommended-count">
+                        0
+                    </p>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==========================================
+                 Demand Chart
+                 ========================================== -->
+
+            <section class="dashboard-card">
+
+                <h2>
+                    Demand by Category
+                </h2>
+
+                <div class="chart-container">
+
+                    <canvas
+                        id="demand-chart"
+                    ></canvas>
+
+                </div>
+
+            </section>
+
+
+            <!-- ==========================================
+                 Recommendations
+                 ========================================== -->
+
+            <section
+                class="dashboard-card"
+                id="dashboard-recommendations"
+            >
+
+                <h2>
+                    Seller Opportunities
+                </h2>
+
+                <div id="dashboard-recommendation-results">
+
+                    <p>
+                        Loading recommendations...
+                    </p>
+
+                </div>
+
+            </section>
+
+
+        </section>
+
+    </main>
+
+
+    <!-- ==================================================
+         Chart.js
+         ================================================== -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js"
+    ></script>
+
+
+    <!-- ==================================================
+         Dashboard JavaScript
+         ================================================== -->
+
+    <script
+        src="{{ url_for(
+            'static',
+            filename='js/dashboard.js'
+        ) }}"
+    ></script>
+
+
+</body>
+
+</html>
