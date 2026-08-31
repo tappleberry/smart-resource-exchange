@@ -1,9 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Marketplace</title>
+
+    <title>Marketplace - Smart Campus Hub</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
@@ -11,169 +13,368 @@
 
 <body>
 
-    <header class="top">
-        <div class="logo">CampusMart</div>
+<div class="layout">
 
-        <nav>
-            <a href="{{ url_for('home_page') }}">Home</a>
-            <a href="{{ url_for('marketplace') }}">Marketplace</a>
-            <a href="{{ url_for('sell') }}">Sell/Rent</a>
-            <a href="{{ url_for('lost_found') }}">Lost and Found</a>
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <h2>Smart Campus Hub</h2>
+        </div>
+
+        <nav class="menu">
+
+            <a href="{{ url_for('home_page') }}" class="menu-item">
+                Home
+            </a>
+
+            <a href="{{ url_for('marketplace') }}" class="menu-item active">
+                Marketplace
+            </a>
+
+            <a href="{{ url_for('sell') }}" class="menu-item">
+                Sell / Rent
+            </a>
+
+            <a href="{{ url_for('lost_found') }}" class="menu-item">
+                Lost & Found
+            </a>
+
         </nav>
 
-        <button class="login-btn">Login</button>
-    </header>
+
+        <!-- Help Box -->
+
+        <div class="help-box">
+
+            <h3>
+                Need something from campus?
+            </h3>
+
+            <p>
+                Buy, sell or rent items from other students.
+            </p>
+
+            <a href="{{ url_for('sell') }}"
+               class="btn btn-primary">
+                Sell / Rent an Item
+            </a>
+
+        </div>
+
+    </aside>
 
 
-    <main>
+    <!-- ================= MAIN CONTENT ================= -->
 
-        <!-- Search & Filters -->
-        <form action="{{ url_for('search') }}" method="GET">
+    <main class="content">
 
-            <!-- Search query -->
-            <input
-                type="text"
-                name="q"
-                placeholder="Search Products"
-                value="{{ request.args.get('q', '') }}"
-            >
 
-            <!-- Category -->
-            <select class="categories" name="category">
+        <!-- ================= HEADER ================= -->
 
-                <option value="">All categories</option>
+        <header class="top-header">
 
-                {% for category in categories %}
+            <div>
+
+                <h1>
+                    Marketplace
+                </h1>
+
+                <p>
+                    Buy and rent items from students on campus
+                </p>
+
+            </div>
+
+
+            <div class="search-profile">
+
+                <div class="profile-icon">
+                    👤
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ================= MARKETPLACE ================= -->
+
+        <section class="marketplace-area">
+
+
+            <h2>
+                Available Items
+            </h2>
+
+
+            <!-- ================= SEARCH & FILTERS ================= -->
+
+            <form action="{{ url_for('search') }}"
+                  method="GET">
+
+
+                <!-- Search -->
+
+                <input
+                    type="text"
+                    name="q"
+                    placeholder="Search Products"
+                    value="{{ request.args.get('q', '') }}"
+                >
+
+
+                <!-- Category -->
+
+                <select name="category">
+
+                    <option value="">
+                        All categories
+                    </option>
+
+
+                    {% for category in categories %}
+
+                        <option
+                            value="{{ category['category'] }}"
+                            {% if request.args.get('category') == category['category'] %}
+                                selected
+                            {% endif %}
+                        >
+
+                            {{ category['category'] }}
+
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+
+                <!-- Listing Type -->
+
+                <select name="listing_type">
+
+                    <option value="">
+                        All listing types
+                    </option>
+
+
                     <option
-                        value="{{ category['category'] }}"
-                        {% if request.args.get('category') == category['category'] %}
+                        value="sell"
+                        {% if request.args.get('listing_type') == 'sell' %}
                             selected
                         {% endif %}
                     >
-                        {{ category['category'] }}
+                        Sell
                     </option>
+
+
+                    <option
+                        value="rent"
+                        {% if request.args.get('listing_type') == 'rent' %}
+                            selected
+                        {% endif %}
+                    >
+                        Rent
+                    </option>
+
+                </select>
+
+
+                <!-- Minimum Price -->
+
+                <input
+                    type="number"
+                    name="min_price"
+                    placeholder="Min price"
+                    min="0"
+                    value="{{ request.args.get('min_price', '') }}"
+                >
+
+
+                <!-- Maximum Price -->
+
+                <input
+                    type="number"
+                    name="max_price"
+                    placeholder="Max price"
+                    min="0"
+                    value="{{ request.args.get('max_price', '') }}"
+                >
+
+
+                <!-- Condition -->
+
+                <select name="condition">
+
+                    <option value="">
+                        All conditions
+                    </option>
+
+
+                    <option
+                        value="new"
+                        {% if request.args.get('condition') == 'new' %}
+                            selected
+                        {% endif %}
+                    >
+                        New
+                    </option>
+
+
+                    <option
+                        value="used"
+                        {% if request.args.get('condition') == 'used' %}
+                            selected
+                        {% endif %}
+                    >
+                        Used
+                    </option>
+
+                </select>
+
+
+                <!-- Search Button -->
+
+                <button
+                    class="search"
+                    type="submit"
+                >
+                    Search
+                </button>
+
+            </form>
+
+
+
+            <!-- ================= PRODUCT CARDS ================= -->
+
+            <div class="marketplace-products">
+
+
+                {% for product in products %}
+
+
+                    <div class="product-card">
+
+
+                        <!-- Product Image -->
+
+                        <div class="product-image">
+
+                            {% if product['image_path'] %}
+
+                                <img
+                                    src="{{ url_for('static', filename=product['image_path']) }}"
+                                    alt="{{ product['title'] }}"
+                                >
+
+                            {% else %}
+
+                                <p>
+                                    No image available
+                                </p>
+
+                            {% endif %}
+
+                        </div>
+
+
+
+                        <!-- Product Title -->
+
+                        <h3>
+                            {{ product['title'] }}
+                        </h3>
+
+
+
+                        <!-- Category -->
+
+                        <p class="category">
+                            {{ product['category'] }}
+                        </p>
+
+
+
+                        <!-- Description -->
+
+                        <p>
+                            {{ product['description'] }}
+                        </p>
+
+
+
+                        <!-- Price -->
+
+                        <h4>
+                            ₹{{ product['price'] }}
+                        </h4>
+
+
+
+                        <!-- Listing Type -->
+
+                        <p>
+                            Type:
+                            {{ product['listing_type'] }}
+                        </p>
+
+
+
+                        <!-- Condition -->
+
+                        <p>
+                            Condition:
+                            {{ product['condition'] }}
+                        </p>
+
+
+
+                        <!-- Details -->
+
+                        <a href="{{ url_for('product', item_id=product['id']) }}">
+                            View Details
+                        </a>
+
+
+                    </div>
+
+
+                {% else %}
+
+
+                    <div class="no-products">
+
+                        <h3>
+                            No items found
+                        </h3>
+
+                        <p>
+                            Try changing your search or filters.
+                        </p>
+
+                    </div>
+
+
                 {% endfor %}
 
-            </select>
 
+            </div>
 
-            <!-- Listing type -->
-            <select name="listing_type">
-
-                <option value="">All listing types</option>
-
-                <option
-                    value="sell"
-                    {% if request.args.get('listing_type') == 'sell' %}selected{% endif %}
-                >
-                    Sell
-                </option>
-
-                <option
-                    value="rent"
-                    {% if request.args.get('listing_type') == 'rent' %}selected{% endif %}
-                >
-                    Rent
-                </option>
-
-            </select>
-
-
-            <!-- Minimum price -->
-            <input
-                type="number"
-                name="min_price"
-                placeholder="Min price"
-                min="0"
-                value="{{ request.args.get('min_price', '') }}"
-            >
-
-
-            <!-- Maximum price -->
-            <input
-                type="number"
-                name="max_price"
-                placeholder="Max price"
-                min="0"
-                value="{{ request.args.get('max_price', '') }}"
-            >
-
-
-            <!-- Condition -->
-            <select name="condition">
-
-                <option value="">All conditions</option>
-
-                <option
-                    value="new"
-                    {% if request.args.get('condition') == 'new' %}selected{% endif %}
-                >
-                    New
-                </option>
-
-                <option
-                    value="used"
-                    {% if request.args.get('condition') == 'used' %}selected{% endif %}
-                >
-                    Used
-                </option>
-
-            </select>
-
-
-            <button class="search" type="submit">
-                Search
-            </button>
-
-        </form>
-        <!-- Marketplace Items -->
-        <section class="products">
-
-            {% for product in products %}
-
-                <div class="product-card">
-
-                    {% if product['image_path'] %}
-                        <img
-                            src="{{ url_for('static', filename=product['image_path']) }}"
-                            alt="{{ product['title'] }}"
-                        >
-                    {% endif %}
-
-                    <h3>{{ product['title'] }}</h3>
-
-                    <p>{{ product['description'] }}</p>
-
-                    <p>
-                        Category: {{ product['category'] }}
-                    </p>
-
-                    <p>
-                        Type: {{ product['listing_type'] }}
-                    </p>
-
-                    <p>
-                        Condition: {{ product['condition'] }}
-                    </p>
-
-                    <p>
-                        Price: ₹{{ product['price'] }}
-                    </p>
-
-                    <a href="{{ url_for('product', item_id=product['id']) }}">
-                        View Details
-                    </a>
-
-                </div>
-
-            {% else %}
-
-                <p>No items found.</p>
-
-            {% endfor %}
 
         </section>
+
+
     </main>
 
+
+</div>
+
+
 </body>
+
 </html>
