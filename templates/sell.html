@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -11,6 +12,7 @@
           href="{{ url_for('static', filename='css/style.css') }}">
 
     <style>
+
         .sell-page {
             max-width: 900px;
             margin: 0 auto;
@@ -46,6 +48,7 @@
             background: #ffffff;
             color: #334155;
             font-size: 14px;
+            box-sizing: border-box;
         }
 
         .form-group textarea {
@@ -93,6 +96,12 @@
             object-fit: contain;
         }
 
+        .form-note {
+            margin-top: 10px;
+            color: #64748b;
+            font-size: 13px;
+        }
+
         .form-actions {
             display: flex;
             gap: 12px;
@@ -123,10 +132,23 @@
             border: 1px solid #cbd5e1;
             background: #ffffff;
             color: #475569;
+            text-decoration: none;
         }
 
         .cancel-btn:hover {
             background: #f1f5f9;
+        }
+
+        .analyzing {
+            color: #4f46e5;
+        }
+
+        .success {
+            color: #16a34a;
+        }
+
+        .error {
+            color: #dc2626;
         }
 
         @media (max-width: 700px) {
@@ -143,7 +165,9 @@
             .form-actions {
                 flex-direction: column;
             }
+
         }
+
     </style>
 
 </head>
@@ -154,33 +178,39 @@
 <div class="layout">
 
 
-    <!-- ================= SIDEBAR ================= -->
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
 
     <aside class="sidebar">
 
         <div class="logo">
-            <h2>Smart Campus Hub</h2>
+
+            <h2>
+                Smart Campus Hub
+            </h2>
+
         </div>
 
 
         <nav class="menu">
 
-            <a href="{{ url_for('home_page') }}"
+            <a href="/"
                class="menu-item">
                 Home
             </a>
 
-            <a href="{{ url_for('marketplace') }}"
+            <a href="/marketplace/"
                class="menu-item">
                 Marketplace
             </a>
 
-            <a href="{{ url_for('sell') }}"
+            <a href="/sell-rent/"
                class="menu-item active">
                 Sell / Rent
             </a>
 
-            <a href="{{ url_for('lost_found') }}"
+            <a href="/lost_found/"
                class="menu-item">
                 Lost & Found
             </a>
@@ -204,12 +234,14 @@
 
 
 
-    <!-- ================= MAIN CONTENT ================= -->
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
 
     <main class="content">
 
 
-        <!-- ================= HEADER ================= -->
+        <!-- HEADER -->
 
         <header class="top-header">
 
@@ -220,7 +252,7 @@
                 </h1>
 
                 <p>
-                    List an item for other students on campus
+                    List an item for other students on campus.
                 </p>
 
             </div>
@@ -238,7 +270,9 @@
 
 
 
-        <!-- ================= SELL FORM ================= -->
+        <!-- =================================================
+             FORM
+        ================================================== -->
 
         <div class="sell-page">
 
@@ -246,13 +280,69 @@
 
 
                 <form
-                    action="{{ url_for('add_item') }}"
+                    id="sellForm"
+                    action="/sell-rent/add/"
                     method="POST"
                     enctype="multipart/form-data"
                 >
 
 
-                    <!-- Item Title -->
+                     <!-- =================================================
+                         IMAGE
+                    ================================================== -->
+
+                    <div class="form-group">
+
+                        <label for="image">
+                            Item Photo
+                        </label>
+
+
+                        <div class="image-upload">
+
+
+                            <input
+                                type="file"
+                                id="image"
+                                name="image"
+                                accept="image/png,image/jpeg,image/jpg,image/webp"
+                                required
+                            >
+
+
+                            <p
+                                id="imageStatus"
+                                class="form-note"
+                            >
+                                Upload an image to automatically detect
+                                item details.
+                            </p>
+
+
+                            <div
+                                id="imagePreview"
+                                class="image-preview"
+                            >
+
+                                <img
+                                    id="previewImage"
+                                    src="#"
+                                    alt="Selected item"
+                                >
+
+                            </div>
+
+
+                        </div>
+
+                    </div>
+
+
+
+
+                    <!-- =================================================
+                         ITEM NAME
+                    ================================================== -->
 
                     <div class="form-group">
 
@@ -265,6 +355,7 @@
                             id="title"
                             name="title"
                             placeholder="e.g. Dell Laptop"
+                            autocomplete="off"
                             required
                         >
 
@@ -272,7 +363,9 @@
 
 
 
-                    <!-- Description -->
+                    <!-- =================================================
+                         DESCRIPTION
+                    ================================================== -->
 
                     <div class="form-group">
 
@@ -284,6 +377,7 @@
                             id="description"
                             name="description"
                             placeholder="Describe your item..."
+                            autocomplete="off"
                             required
                         ></textarea>
 
@@ -291,7 +385,9 @@
 
 
 
-                    <!-- Category + Listing Type -->
+                    <!-- =================================================
+                         CATEGORY + LISTING TYPE
+                    ================================================== -->
 
                     <div class="form-row">
 
@@ -307,6 +403,7 @@
                                 id="category"
                                 name="category"
                                 placeholder="e.g. Books"
+                                autocomplete="off"
                                 required
                             >
 
@@ -346,7 +443,54 @@
 
 
 
-                    <!-- Price + Condition -->
+                    <!-- =================================================
+                         COLOR + TAGS
+                    ================================================== -->
+
+                    <div class="form-row">
+
+
+                        <div class="form-group">
+
+                            <label for="color">
+                                Color
+                            </label>
+
+                            <input
+                                type="text"
+                                id="color"
+                                name="color"
+                                placeholder="e.g. Black"
+                                autocomplete="off"
+                            >
+
+                        </div>
+
+
+
+                        <div class="form-group">
+
+                            <label for="tags">
+                                Tags
+                            </label>
+
+                            <input
+                                type="text"
+                                id="tags"
+                                name="tags"
+                                placeholder="e.g. bicycle, cycle, sports"
+                                autocomplete="off"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- =================================================
+                         PRICE + CONDITION
+                    ================================================== -->
 
                     <div class="form-row">
 
@@ -403,48 +547,14 @@
 
 
 
-                    <!-- Image -->
+                   
 
-                    <div class="form-group">
-
-                        <label for="image">
-                            Item Photo
-                        </label>
-
-
-                        <div class="image-upload">
-
-                            <input
-                                type="file"
-                                id="image"
-                                name="image"
-                                accept="image/png,image/jpeg,image/jpg,image/webp"
-                                required
-                            >
-
-
-                            <div
-                                class="image-preview"
-                                id="imagePreview"
-                            >
-
-                                <img
-                                    id="previewImage"
-                                    src="#"
-                                    alt="Selected item preview"
-                                >
-
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-
-                    <!-- Buttons -->
+                    <!-- =================================================
+                         BUTTONS
+                    ================================================== -->
 
                     <div class="form-actions">
+
 
                         <button
                             type="submit"
@@ -455,11 +565,12 @@
 
 
                         <a
-                            href="{{ url_for('marketplace') }}"
+                            href="/marketplace/"
                             class="cancel-btn"
                         >
                             Cancel
                         </a>
+
 
                     </div>
 
@@ -477,7 +588,9 @@
 
 
 
-<!-- ================= IMAGE PREVIEW ================= -->
+<!-- =========================================================
+     JAVASCRIPT
+========================================================== -->
 
 <script>
 
@@ -490,42 +603,434 @@
     const previewImage =
         document.getElementById("previewImage");
 
-
-    imageInput.addEventListener("change", function () {
-
-        const file = this.files[0];
+    const imageStatus =
+        document.getElementById("imageStatus");
 
 
-        if (!file) {
+    const titleInput =
+        document.getElementById("title");
 
-            imagePreview.style.display = "none";
+    const descriptionInput =
+        document.getElementById("description");
 
-            previewImage.src = "#";
+    const categoryInput =
+        document.getElementById("category");
 
-            return;
+    const conditionInput =
+        document.getElementById("condition");
+
+    const colorInput =
+        document.getElementById("color");
+
+    const tagsInput =
+        document.getElementById("tags");
+
+    const priceInput =
+        document.getElementById("price");
+
+
+
+    /* =========================================================
+       IMAGE UPLOAD
+    ========================================================== */
+
+    imageInput.addEventListener(
+        "change",
+        async function () {
+
+
+            const file =
+                this.files[0];
+
+
+            if (!file) {
+
+                imagePreview.style.display =
+                    "none";
+
+                previewImage.src =
+                    "#";
+
+                imageStatus.textContent =
+                    "Upload an image to automatically detect item details.";
+
+                imageStatus.className =
+                    "form-note";
+
+                return;
+            }
+
+
+
+            /* Check image */
+
+            if (!file.type.startsWith("image/")) {
+
+                imageInput.value =
+                    "";
+
+                imagePreview.style.display =
+                    "none";
+
+                previewImage.src =
+                    "#";
+
+                imageStatus.textContent =
+                    "Please select an image file.";
+
+                imageStatus.className =
+                    "form-note error";
+
+                return;
+            }
+
+
+
+            /* =====================================================
+               SHOW PREVIEW
+            ====================================================== */
+
+            previewImage.src =
+                URL.createObjectURL(file);
+
+            imagePreview.style.display =
+                "block";
+
+
+            imageStatus.textContent =
+                "Analyzing image...";
+
+            imageStatus.className =
+                "form-note analyzing";
+
+
+
+            /* =====================================================
+               SEND IMAGE TO BACKEND
+               
+               CORRECT ROUTE:
+               
+               POST /api/sell-rent/analyze-image/
+            ====================================================== */
+
+            const formData =
+                new FormData();
+
+            formData.append(
+                "image",
+                file
+            );
+
+
+            try {
+
+
+                const response =
+                    await fetch(
+                        "/api/sell-rent/analyze-image/",
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+
+
+
+                /* =================================================
+                   CHECK HTTP RESPONSE
+                ================================================== */
+
+                if (!response.ok) {
+
+                    const errorText =
+                        await response.text();
+
+                    console.error(
+                        "Image analysis HTTP error:",
+                        response.status,
+                        errorText
+                    );
+
+                    throw new Error(
+                        "Image analysis failed: HTTP " +
+                        response.status
+                    );
+                }
+
+
+
+                /* =================================================
+                   GET JSON
+                ================================================== */
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "Image analysis API response:",
+                    data
+                );
+
+
+
+                /* =================================================
+                   ITEM NAME
+                ================================================== */
+
+                if (
+                    data.item_name !== undefined &&
+                    data.item_name !== null
+                ) {
+
+                    titleInput.value =
+                        data.item_name;
+
+                }
+
+
+
+                /* =================================================
+                   CATEGORY
+                ================================================== */
+
+                if (
+                    data.category !== undefined &&
+                    data.category !== null
+                ) {
+
+                    categoryInput.value =
+                        data.category;
+
+                }
+
+
+
+                /* =================================================
+                   CONDITION
+                ================================================== */
+
+                if (
+                    data.condition !== undefined &&
+                    data.condition !== null
+                ) {
+
+
+                    const detectedCondition =
+                        String(
+                            data.condition
+                        ).trim();
+
+
+                    let matched =
+                        false;
+
+
+                    for (
+                        let i = 0;
+                        i < conditionInput.options.length;
+                        i++
+                    ) {
+
+
+                        const option =
+                            conditionInput.options[i];
+
+
+                        if (
+                            option.value.toLowerCase() ===
+                                detectedCondition.toLowerCase()
+                            ||
+                            option.text.toLowerCase() ===
+                                detectedCondition.toLowerCase()
+                        ) {
+
+
+                            conditionInput.value =
+                                option.value;
+
+
+                            matched =
+                                true;
+
+
+                            break;
+
+                        }
+
+                    }
+
+
+
+                    /*
+                     * If Gemini returns a condition
+                     * not present in the dropdown,
+                     * add it automatically.
+                     */
+
+                    if (
+                        !matched &&
+                        detectedCondition !== ""
+                    ) {
+
+
+                        const newOption =
+                            document.createElement(
+                                "option"
+                            );
+
+
+                        newOption.value =
+                            detectedCondition;
+
+                        newOption.textContent =
+                            detectedCondition;
+
+
+                        conditionInput.appendChild(
+                            newOption
+                        );
+
+
+                        conditionInput.value =
+                            detectedCondition;
+
+                    }
+
+                }
+
+
+
+                /* =================================================
+                   COLOR
+                ================================================== */
+
+                if (
+                    data.color !== undefined &&
+                    data.color !== null
+                ) {
+
+                    colorInput.value =
+                        data.color;
+
+                }
+
+
+
+                /* =================================================
+                   TAGS
+                ================================================== */
+
+                if (
+                    data.tags !== undefined &&
+                    data.tags !== null
+                ) {
+
+
+                    if (
+                        Array.isArray(data.tags)
+                    ) {
+
+                        tagsInput.value =
+                            data.tags.join(", ");
+
+                    }
+                    else {
+
+                        tagsInput.value =
+                            data.tags;
+
+                    }
+
+                }
+
+
+
+                /* =================================================
+                   DESCRIPTION
+                ================================================== */
+
+                if (
+                    data.description !== undefined &&
+                    data.description !== null
+                ) {
+
+                    descriptionInput.value =
+                        data.description;
+
+                }
+
+
+
+                /* =================================================
+                   SUGGESTED PRICE
+                ================================================== */
+
+                if (
+                    data.suggested_price !== undefined &&
+                    data.suggested_price !== null &&
+                    data.suggested_price !== ""
+                ) {
+
+
+                    const numericPrice =
+                        String(
+                            data.suggested_price
+                        )
+                        .replace(
+                            /[^0-9.]/g,
+                            ""
+                        );
+
+
+                    if (numericPrice) {
+
+                        priceInput.value =
+                            numericPrice;
+
+                    }
+
+                }
+
+
+
+                /* =================================================
+                   SUCCESS
+                ================================================== */
+
+                imageStatus.textContent =
+                    "Image analyzed successfully. You can edit the detected details.";
+
+                imageStatus.className =
+                    "form-note success";
+
+
+                console.log(
+                    "All detected fields autofilled."
+                );
+
+            }
+
+
+            catch (error) {
+
+
+                console.error(
+                    "Image analysis error:",
+                    error
+                );
+
+
+                imageStatus.textContent =
+                    "Could not analyze the image. You can enter the details manually.";
+
+                imageStatus.className =
+                    "form-note error";
+
+            }
+
         }
-
-
-        if (!file.type.startsWith("image/")) {
-
-            imageInput.value = "";
-
-            imagePreview.style.display = "none";
-
-            previewImage.src = "#";
-
-            alert("Please select an image file.");
-
-            return;
-        }
-
-
-        previewImage.src =
-            URL.createObjectURL(file);
-
-        imagePreview.style.display = "block";
-
-    });
+    );
 
 </script>
 

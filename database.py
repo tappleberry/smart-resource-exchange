@@ -160,7 +160,8 @@ def get_item_with_seller(item_id):
                 items.* ,
                 users.name AS seller_name,
                 users.regno AS seller_regno,
-                users.department AS seller_department
+                users.department AS seller_department,
+                users.email AS seller_email
             FROM items
             JOIN users
                 ON items.seller_id = users.id
