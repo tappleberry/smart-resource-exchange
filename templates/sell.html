@@ -291,6 +291,13 @@
                          IMAGE
                     ================================================== -->
 
+                    <input
+                        type="hidden"
+                        id="image_path"
+                        name="image_path"
+                        value=""
+                    >
+
                     <div class="form-group">
 
                         <label for="image">
@@ -606,7 +613,10 @@
     const imageStatus =
         document.getElementById("imageStatus");
 
+    const imagePathInput =
+        document.getElementById("image_path");
 
+        
     const titleInput =
         document.getElementById("title");
 
@@ -771,6 +781,31 @@
                     "Image analysis API response:",
                     data
                 );
+
+                /* =========================================================
+                SAVE IMAGE PATH FOR FINAL FORM SUBMISSION
+                ========================================================= */
+
+                if (
+                    data.image_path !== undefined &&
+                    data.image_path !== null &&
+                    data.image_path !== ""
+                ) {
+                    imagePathInput.value =
+                        data.image_path;
+
+                    console.log(
+                        "Image path stored in form:",
+                        imagePathInput.value
+                    );
+
+                }
+
+                else {
+                    console.error(
+                        "API did not return image_path."
+                    );
+                }
 
 
 

@@ -185,7 +185,7 @@ def analyze_sell_image():
     try:
 
         ai_result = analyze_item(image_path)
-
+        ai_result["image_path"] = "uploads/" + filename
 
         return ai_result
 
@@ -324,7 +324,7 @@ def add_item():
         return {
             "status": "failed",
             "message": "Condition is required"
-        }, 400
+        }, 400 
 
     # ------------------------------------------------
     # Create database item
