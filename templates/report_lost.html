@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Report Lost Item - Smart Campus Hub</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        .report-page {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .report-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 11px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 14px;
+            outline: none;
+            background: white;
+        }
+
+        .form-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            border-color: #4f46e5;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .image-upload {
+            border: 2px dashed #cbd5e1;
+            border-radius: 10px;
+            padding: 25px;
+            text-align: center;
+            background: #f8fafc;
+        }
+
+        .image-upload input {
+            border: none;
+            padding: 0;
+        }
+
+        .image-preview {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .image-preview img {
+            max-width: 280px;
+            max-height: 220px;
+            border-radius: 10px;
+            object-fit: contain;
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-note {
+            margin-top: 10px;
+            font-size: 13px;
+            color: #64748b;
+        }
+
+        .analyzing {
+            color: #4f46e5;
+        }
+
+        .success {
+            color: #16a34a;
+        }
+
+        .error {
+            color: #dc2626;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 25px;
+        }
+
+        .submit-btn {
+            padding: 11px 20px;
+            border: none;
+            border-radius: 8px;
+            background: #4f46e5;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background: #4338ca;
+        }
+
+        .cancel-btn {
+            padding: 11px 20px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            background: white;
+            color: #475569;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .cancel-btn:hover {
+            background: #f1f5f9;
+        }
+
+        @media (max-width: 700px) {
+
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+
+            .report-card {
+                padding: 20px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="layout">
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+
+            <h2>
+                Smart Campus Hub
+            </h2>
+
+        </div>
+
+
+        <nav class="menu">
+
+            <a href="/" class="menu-item">
+                Home
+            </a>
+
+            <a href="/marketplace/" class="menu-item">
+                Marketplace
+            </a>
+
+            <a href="/sell-rent/" class="menu-item">
+                Sell / Rent
+            </a>
+
+            <a href="/lost_found/" class="menu-item active">
+                Lost & Found
+            </a>
+
+        </nav>
+
+
+        <div class="help-box">
+
+            <h3>
+                Help someone find a lost item.
+            </h3>
+
+            <p>
+                Report your lost item so other students can help you find it.
+            </p>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="content">
+
+
+        <header class="top-header">
+
+            <div>
+
+                <h1>
+                    Report Lost Item
+                </h1>
+
+                <p>
+                    Upload an image and provide details about your lost item.
+                </p>
+
+            </div>
+
+
+            <div class="search-profile">
+
+                <div class="profile-icon">
+                    👤
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- ================= FORM ================= -->
+
+        <div class="report-page">
+
+            <div class="report-card">
+
+
+                <form id="lostForm">
+
+
+                    <!-- Hidden report type -->
+
+                    <input
+                        type="hidden"
+                        id="report_type"
+                        value="lost"
+                    >
+
+
+                    <!-- Hidden image path -->
+
+                    <input
+                        type="hidden"
+                        id="image_path"
+                        name="image_path"
+                    >
+
+
+                    <!-- ================= IMAGE ================= -->
+
+                    <div class="form-group">
+
+                        <label for="image">
+                            Item Photo
+                        </label>
+
+
+                        <div class="image-upload">
+
+                            <input
+                                type="file"
+                                id="image"
+                                accept="image/png,image/jpeg,image/jpg,image/webp"
+                                required
+                            >
+
+
+                            <p
+                                id="imageStatus"
+                                class="form-note"
+                            >
+                                Upload an image to automatically identify
+                                the item.
+                            </p>
+
+
+                            <div
+                                id="imagePreview"
+                                class="image-preview"
+                            >
+
+                                <img
+                                    id="previewImage"
+                                    src="#"
+                                    alt="Lost item preview"
+                                >
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ================= OBJECT + COLOR ================= -->
+
+                    <div class="form-row">
+
+
+                        <div class="form-group">
+
+                            <label for="object">
+                                Item / Object
+                            </label>
+
+                            <input
+                                type="text"
+                                id="object"
+                                name="title"
+                                placeholder="e.g. Black Backpack"
+                                required
+                            >
+
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="color">
+                                Color
+                            </label>
+
+                            <input
+                                type="text"
+                                id="color"
+                                name="color"
+                                placeholder="e.g. Black"
+                            >
+
+                        </div>
+
+                    </div>
+
+
+
+                    <!-- ================= TYPE ================= -->
+
+                    <div class="form-group">
+
+                        <label for="type">
+                            Item Type
+                        </label>
+
+                        <input
+                            type="text"
+                            id="type"
+                            name="category"
+                            placeholder="e.g. Backpack, Wallet, Phone"
+                        >
+
+                    </div>
+
+
+
+                    <!-- ================= FEATURES ================= -->
+
+                    <div class="form-group">
+
+                        <label for="features">
+                            Features
+                        </label>
+
+                        <textarea
+                            id="features"
+                            name="features"
+                            placeholder="Distinctive features of the item..."
+                        ></textarea>
+
+                    </div>
+
+
+
+                    <!-- ================= DESCRIPTION ================= -->
+
+                    <div class="form-group">
+
+                        <label for="description">
+                            Description
+                        </label>
+
+                        <textarea
+                            id="description"
+                            name="description"
+                            placeholder="Add any additional details..."
+                            required
+                        ></textarea>
+
+                    </div>
+
+
+
+                    <!-- ================= LOCATION ================= -->
+
+                    <div class="form-group">
+
+                        <label for="location">
+                            Where did you lose it?
+                        </label>
+
+                        <input
+                            type="text"
+                            id="location"
+                            name="location"
+                            placeholder="e.g. Library, Block A, Cafeteria"
+                            required
+                        >
+
+                    </div>
+
+
+
+                    <!-- ================= BUTTONS ================= -->
+
+                    <div class="form-actions">
+
+                        <button
+                            type="submit"
+                            class="submit-btn"
+                        >
+                            Report Lost Item
+                        </button>
+
+
+                        <a
+                            href="/lost_found/"
+                            class="cancel-btn"
+                        >
+                            Cancel
+                        </a>
+
+                    </div>
+
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </main>
+
+</div>
+
+
+
+<script>
+
+    const imageInput =
+        document.getElementById("image");
+
+    const imagePreview =
+        document.getElementById("imagePreview");
+
+    const previewImage =
+        document.getElementById("previewImage");
+
+    const imageStatus =
+        document.getElementById("imageStatus");
+
+
+    const objectInput =
+        document.getElementById("object");
+
+    const colorInput =
+        document.getElementById("color");
+
+    const typeInput =
+        document.getElementById("type");
+
+    const featuresInput =
+        document.getElementById("features");
+
+    const descriptionInput =
+        document.getElementById("description");
+
+    const locationInput =
+        document.getElementById("location");
+
+    const imagePathInput =
+        document.getElementById("image_path");
+
+
+
+    /* =====================================================
+       IMAGE ANALYSIS
+    ===================================================== */
+
+    imageInput.addEventListener(
+        "change",
+        async function () {
+
+            const file =
+                this.files[0];
+
+
+            if (!file) {
+                return;
+            }
+
+
+            /* Preview */
+
+            previewImage.src =
+                URL.createObjectURL(file);
+
+            imagePreview.style.display =
+                "block";
+
+
+            imageStatus.textContent =
+                "Analyzing image...";
+
+            imageStatus.className =
+                "form-note analyzing";
+
+
+            /* FormData */
+
+            const formData =
+                new FormData();
+
+            formData.append(
+                "image",
+                file
+            );
+
+            formData.append(
+                "type",
+                "lost"
+            );
+
+
+            try {
+
+                const response =
+                    await fetch(
+                        "/api/lost-found/analyze-image/",
+                        {
+                            method: "POST",
+                            body: formData
+                        }
+                    );
+
+
+                if (!response.ok) {
+
+                    const error =
+                        await response.text();
+
+                    console.error(error);
+
+                    throw new Error(
+                        "Image analysis failed"
+                    );
+                }
+
+
+                const data =
+                    await response.json();
+
+
+                console.log(
+                    "Lost item AI result:",
+                    data
+                );
+
+
+                /* =========================================
+                   AUTOFILL OBJECT
+                ========================================= */
+
+                if (data.object) {
+
+                    objectInput.value =
+                        data.object;
+
+                }
+
+
+                /* =========================================
+                   AUTOFILL COLOR
+                ========================================= */
+
+                if (data.color) {
+
+                    colorInput.value =
+                        data.color;
+
+                }
+
+
+                /* =========================================
+                   AUTOFILL TYPE
+                ========================================= */
+
+                if (data.type) {
+
+                    typeInput.value =
+                        data.type;
+
+                }
+
+
+                /* =========================================
+                   AUTOFILL FEATURES
+                ========================================= */
+
+                if (data.features) {
+
+                    if (
+                        Array.isArray(
+                            data.features
+                        )
+                    ) {
+
+                        featuresInput.value =
+                            data.features.join(", ");
+
+                    }
+                    else {
+
+                        featuresInput.value =
+                            data.features;
+
+                    }
+
+                }
+
+
+                /*
+                 * Automatically create a useful
+                 * description from the AI fields.
+                 */
+
+                let generatedDescription = "";
+
+
+                if (data.object) {
+
+                    generatedDescription +=
+                        "Object: " +
+                        data.object +
+                        ". ";
+
+                }
+
+
+                if (data.color) {
+
+                    generatedDescription +=
+                        "Color: " +
+                        data.color +
+                        ". ";
+
+                }
+
+
+                if (data.type) {
+
+                    generatedDescription +=
+                        "Type: " +
+                        data.type +
+                        ". ";
+
+                }
+
+
+                if (data.features) {
+
+                    let featuresText =
+                        Array.isArray(data.features)
+                            ? data.features.join(", ")
+                            : data.features;
+
+                    generatedDescription +=
+                        "Features: " +
+                        featuresText +
+                        ".";
+
+                }
+
+
+                descriptionInput.value =
+                    generatedDescription;
+
+
+                /*
+                 * If backend returns image_path,
+                 * store it for /lost_found/add/
+                 */
+
+                if (data.image_path) {
+
+                    imagePathInput.value =
+                        data.image_path;
+
+                }
+
+
+                imageStatus.textContent =
+                    "Image analyzed successfully. You can edit the detected information.";
+
+                imageStatus.className =
+                    "form-note success";
+
+            }
+
+
+            catch (error) {
+
+                console.error(
+                    "Image analysis error:",
+                    error
+                );
+
+
+                imageStatus.textContent =
+                    "Could not analyze image. Please enter the details manually.";
+
+                imageStatus.className =
+                    "form-note error";
+
+            }
+
+        }
+    );
+
+
+
+    /* =====================================================
+       SUBMIT LOST REPORT
+    ===================================================== */
+
+    document
+        .getElementById("lostForm")
+        .addEventListener(
+            "submit",
+            async function (event) {
+
+                event.preventDefault();
+
+
+                const data = {
+
+                    report_type: "lost",
+
+                    title:
+                        objectInput.value,
+
+                    description:
+                        descriptionInput.value,
+
+                    category:
+                        typeInput.value,
+
+                    location:
+                        locationInput.value,
+
+                    image_path:
+                        imagePathInput.value,
+
+                    user_id: 1
+
+                };
+
+
+                try {
+
+                    const response =
+                        await fetch(
+                            "/lost_found/add/",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body:
+                                    JSON.stringify(data)
+                            }
+                        );
+
+
+                    const result =
+                        await response.json();
+
+
+                    console.log(
+                        "Report response:",
+                        result
+                    );
+
+
+                    if (!response.ok) {
+
+                        throw new Error(
+                            result.message ||
+                            "Could not create report"
+                        );
+
+                    }
+
+
+                    alert(
+                        "Lost item reported successfully!"
+                    );
+
+
+                    window.location.href =
+                        "/lost_found/";
+
+                }
+
+
+                catch (error) {
+
+                    console.error(error);
+
+                    alert(
+                        "Could not submit lost item report."
+                    );
+
+                }
+
+            }
+        );
+
+</script>
+
+
+</body>
+
+</html>

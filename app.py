@@ -4,7 +4,15 @@ import os
 import uuid
 
 from werkzeug.utils import secure_filename
-# from ai import vision, matching  
+
+from ai.vision import analyze_item
+from ai.lost_found import analyze_lost_found_item
+from ai.matching import find_best_matches
+
+from ml.pricing import suggest_price_from_ai_result
+from ml.demand import predict_category_demand
+from ml.recommend import get_category_recommendations
+
 
 app = Flask(__name__)
 
@@ -27,7 +35,7 @@ def marketplace():
 
 @app.route("/marketplace/item/<int:item_id>/")
 def product(item_id):
-    item = database.get_item(item_id)
+    item = database.get_item_with_seller(item_id)
 
     if not item:
         return "Product Not found"
@@ -134,25 +142,133 @@ def log_interaction():
 
 
 # image recognition -------------------------------------------------------------------------------
-'''
-@app.route("/api/image/recognize", methods=['POST'])
-def image_recognition():
-    if image not in request.files:
+
+@app.route("/api/sell-rent/analyze-image/", methods=["POST"])
+def analyze_sell_image():
+
+    image = request.files.get("image")
+
+    if not image or not image.filename:
         return {
-            "status" : "Failed",
-            "message" : "Image required"
-        }
+            "status": "failed",
+            "message": "Image required"
+        }, 400
+
+    # ------------------------------------------------
+    # Save image
+    # ------------------------------------------------
+
+    upload_folder = os.path.join(
+        app.root_path,
+        "static",
+        "uploads"
+    )
+
+    os.makedirs(upload_folder, exist_ok=True)
+
+    original_filename = secure_filename(image.filename)
+    extension = os.path.splitext(original_filename)[1]
+
+    filename = str(uuid.uuid4()) + extension
+
+    image_path = os.path.join(
+        upload_folder,
+        filename
+    )
+
+    image.save(image_path)
+
+    # ------------------------------------------------
+    # Analyze image
+    # ------------------------------------------------
+
+    try:
+
+        ai_result = analyze_item(image_path)
 
 
-    image = request.files("image")
+        return ai_result
 
-    result = vision.analyze_item(image)
+    except Exception as e:
 
-    return {
-        "status" : "Success",
-        "data" : result
-    }
-'''
+        if os.path.exists(image_path):
+            os.remove(image_path)
+
+        return {
+            "status": "failed",
+            "message": "Image analysis failed",
+            "error": str(e)
+        }, 500
+
+@app.route("/api/lost-found/analyze-image/", methods=["POST"])
+def analyze_lf_image():
+
+    image = request.files.get("image")
+    report_type = request.form.get("type")
+
+    # -----------------------------
+    # Validate
+    # -----------------------------
+
+    if not image or not image.filename:
+        return {
+            "status": "failed",
+            "message": "Image required"
+        }, 400
+
+    if report_type not in ["lost", "found"]:
+        return {
+            "status": "failed",
+            "message": "Type must be 'lost' or 'found'"
+        }, 400
+
+    # -----------------------------
+    # Save image
+    # -----------------------------
+
+    upload_folder = os.path.join(
+        app.root_path,
+        "static",
+        "uploads"
+    )
+
+    os.makedirs(upload_folder, exist_ok=True)
+
+    original_filename = secure_filename(image.filename)
+    extension = os.path.splitext(original_filename)[1]
+
+    filename = str(uuid.uuid4()) + extension
+
+    image_path = os.path.join(
+        upload_folder,
+        filename
+    )
+
+    image.save(image_path)
+
+    # -----------------------------
+    # AI recognition
+    # -----------------------------
+
+    try:
+
+        result = analyze_lost_found_item(image_path)
+        result["image_path"] = "uploads/" + filename
+        return result
+    
+    except Exception as e:
+
+        if os.path.exists(image_path):
+            os.remove(image_path)
+
+        return {
+            "status": "failed",
+            "message": "Image analysis failed",
+            "error": str(e)
+        }, 500
+
+
+
 
 # sell and rent site ------------------------------------------------------------------------------
 
@@ -170,106 +286,71 @@ def add_item():
     price = request.form.get("price")
     condition = request.form.get("condition")
 
-    image = request.files.get("image")
+    # Image was already saved during AI analysis
+    image_path = request.form.get("image_path")
 
-
-    # -----------------------------
-    # Basic validation
-    # -----------------------------
-
-    if not title or not description or not category:
-        return {
-            "status": "failed",
-            "message": "Title, description and category are required"
-        }, 400
-
-    if not listing_type or not price or not condition:
-        return {
-            "status": "failed",
-            "message": "Listing type, price and condition are required"
-        }, 400
-
-
-    # -----------------------------
-    # Seller ID
-    # -----------------------------
-    # PLACEHOLDER:
-    # Replace this with the ID of the
-    # currently logged-in user later.
-
+    # Temporary seller ID
     seller_id = 1
 
+    # ------------------------------------------------
+    # Validate
+    # ------------------------------------------------
 
-    # -----------------------------
-    # Save image
-    # -----------------------------
+    if not title:
+        return {
+            "status": "failed",
+            "message": "Title is required"
+        }, 400
 
-    image_path = None
+    if not category:
+        return {
+            "status": "failed",
+            "message": "Category is required"
+        }, 400
 
-    if image and image.filename:
+    if not listing_type:
+        return {
+            "status": "failed",
+            "message": "Listing type is required"
+        }, 400
 
-        upload_folder = os.path.join(
-            app.root_path,
-            "static",
-            "uploads"
-        )
+    if not price:
+        return {
+            "status": "failed",
+            "message": "Price is required"
+        }, 400
 
-        os.makedirs(
-            upload_folder,
-            exist_ok=True
-        )
+    if not condition:
+        return {
+            "status": "failed",
+            "message": "Condition is required"
+        }, 400
 
-        filename = secure_filename(image.filename)
-        extension = os.path.splitext(filename)[1]
-        filename = str(uuid.uuid4()) + extension
-
-        image.save(
-            os.path.join(
-                upload_folder,
-                filename
-            )
-        )
-
-        # Path stored in database
-        image_path = "uploads/" + filename
-
-
-    # -----------------------------
+    # ------------------------------------------------
     # Create database item
-    # -----------------------------
+    # ------------------------------------------------
 
     item_id = database.create_item(
-
         seller_id=seller_id,
-
         title=title,
-
         description=description,
-
         category=category,
-
         listing_type=listing_type,
-
         price=float(price),
-
         image_path=image_path,
-
         condition=condition
     )
 
-
-    # -----------------------------
-    # Response
-    # -----------------------------
-
     if item_id:
-        return redirect(url_for("marketplace"))
+
+        return redirect(
+            url_for("marketplace")
+        )
 
     return {
         "status": "failed",
         "message": "Could not create item"
     }, 500
-
 
 
 # lost and found ----------------------------------------------------------------------------------
@@ -336,12 +417,12 @@ def add_lost_found_item():
 
 @app.route("/lost_found/report/lost")
 def report_lost():
-    return "Report Lost Item page - placeholder"
+    return render_template("report_lost.html")
 
 
 @app.route("/lost_found/report/found")
 def report_found():
-    return "Report Found Item page - placeholder"
+    return render_template("report_found.html")
 
 
 @app.route("/lost_found/<int:report_id>")
