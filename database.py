@@ -402,6 +402,31 @@ def update_lost_found_status(report_id , status):
     finally:
         connection.close()
 
+def get_lost_found_report(report_id):
+    connection = get_connection()
+
+    try:
+        cursor = connection.execute(
+            """
+            SELECT
+                lost_found.*,
+                users.name AS user_name
+            FROM lost_found
+            JOIN users
+                ON lost_found.user_id = users.id
+            WHERE lost_found.id = ?
+              AND lost_found.status = 'active'
+            """,
+            (report_id,)
+        )
+
+        report = cursor.fetchone()
+
+        return report
+
+    finally:
+        connection.close()
+        
 #====================   ANALYTICS   ================================
 def log_search(user_id, query, category=None):
     connection = get_connection()

@@ -1,0 +1,802 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Possible Matches - Smart Campus Hub</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        /* =========================================
+           MATCHING PAGE
+        ========================================= */
+
+        .matching-container {
+            margin-top: 25px;
+        }
+
+        .section-header {
+            margin-bottom: 20px;
+        }
+
+        .section-header h2 {
+            margin-bottom: 5px;
+        }
+
+        .section-header p {
+            color: #6b7280;
+            margin: 0;
+        }
+
+
+        /* =========================================
+           LOST ITEM CARD
+        ========================================= */
+
+        .lost-item-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+
+            display: flex;
+            align-items: center;
+            gap: 20px;
+
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        .lost-item-image {
+            width: 110px;
+            height: 110px;
+            border-radius: 10px;
+            overflow: hidden;
+            background: #f3f4f6;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            flex-shrink: 0;
+        }
+
+        .lost-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .lost-item-image .no-img {
+            color: #9ca3af;
+            font-size: 14px;
+        }
+
+        .lost-item-info {
+            flex: 1;
+        }
+
+        .lost-item-info h3 {
+            margin: 0 0 8px 0;
+            font-size: 20px;
+        }
+
+        .lost-item-info p {
+            margin: 5px 0;
+            color: #6b7280;
+        }
+
+        .lost-item-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+
+        /* =========================================
+           MATCH BUTTON
+        ========================================= */
+
+        .match-button {
+            display: inline-block;
+            padding: 11px 18px;
+
+            border-radius: 8px;
+            border: none;
+
+            background: #111827;
+            color: white;
+
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+
+            cursor: pointer;
+
+            transition: 0.2s;
+        }
+
+        .match-button:hover {
+            background: #374151;
+        }
+
+
+        /* =========================================
+           MATCH RESULTS
+        ========================================= */
+
+        .results-section {
+            margin-top: 30px;
+        }
+
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 15px;
+        }
+
+        .results-header h2 {
+            margin: 0;
+        }
+
+        .results-count {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+
+        /* =========================================
+           MATCH CARD
+        ========================================= */
+
+        .match-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+
+            padding: 18px;
+            margin-bottom: 15px;
+
+            display: flex;
+            align-items: center;
+            gap: 18px;
+
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+        }
+
+        .match-image {
+            width: 100px;
+            height: 100px;
+
+            border-radius: 10px;
+            overflow: hidden;
+
+            background: #f3f4f6;
+
+            flex-shrink: 0;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .match-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .match-info {
+            flex: 1;
+        }
+
+        .match-info h3 {
+            margin: 0 0 8px 0;
+            font-size: 18px;
+        }
+
+        .match-description {
+            color: #6b7280;
+            margin: 5px 0;
+        }
+
+        .match-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+
+            margin-top: 8px;
+
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+
+        /* =========================================
+           SCORE
+        ========================================= */
+
+        .match-score-box {
+            min-width: 100px;
+            text-align: center;
+        }
+
+        .match-score {
+            font-size: 25px;
+            font-weight: 700;
+        }
+
+        .match-level {
+            display: inline-block;
+
+            margin-top: 5px;
+            padding: 5px 10px;
+
+            border-radius: 20px;
+
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .match-high {
+            background: #dcfce7;
+            color: #166534;
+        }
+
+        .match-medium {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .match-low {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+
+        /* =========================================
+           MATCH DETAILS
+        ========================================= */
+
+        .score-details {
+            margin-top: 12px;
+
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .score-detail {
+            background: #f9fafb;
+            border: 1px solid #e5e7eb;
+
+            border-radius: 6px;
+
+            padding: 5px 8px;
+
+            font-size: 12px;
+            color: #4b5563;
+        }
+
+
+        /* =========================================
+           EMPTY STATE
+        ========================================= */
+
+        .empty-state {
+            background: white;
+            border: 1px solid #e5e7eb;
+
+            border-radius: 12px;
+
+            padding: 45px 20px;
+
+            text-align: center;
+
+            color: #6b7280;
+        }
+
+        .empty-state h3 {
+            margin-bottom: 8px;
+            color: #374151;
+        }
+
+
+        /* =========================================
+           RESPONSIVE
+        ========================================= */
+
+        @media (max-width: 800px) {
+
+            .lost-item-card,
+            .match-card {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .match-score-box {
+                text-align: left;
+            }
+
+            .lost-item-image,
+            .match-image {
+                width: 100%;
+                height: 180px;
+            }
+
+        }
+
+    </style>
+</head>
+
+
+<body>
+
+<div class="layout">
+
+
+    <!-- =========================================
+         SIDEBAR
+    ========================================== -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <h2>Smart Campus Hub</h2>
+        </div>
+
+
+        <nav class="menu">
+
+            <a href="/" class="menu-item">
+                Home
+            </a>
+
+            <a href="/marketplace/" class="menu-item">
+                Marketplace
+            </a>
+
+            <a href="/sell-rent/" class="menu-item">
+                Sell / Rent
+            </a>
+
+            <a href="/lost_found/" class="menu-item active">
+                Lost & Found
+            </a>
+
+        </nav>
+
+
+        <div class="help-box">
+
+            <h3>
+                Lost something?
+            </h3>
+
+            <p>
+                Report your lost item and let AI search for possible matches.
+            </p>
+
+            <div class="help-actions">
+
+                <a href="/lost_found/report/lost"
+                   class="btn btn-primary">
+                    Report Lost Item
+                </a>
+
+                <a href="/lost_found/report/found"
+                   class="btn btn-secondary">
+                    Report Found Item
+                </a>
+
+            </div>
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- =========================================
+         MAIN CONTENT
+    ========================================== -->
+
+    <main class="content">
+
+
+        <!-- HEADER -->
+
+        <header class="top-header">
+
+            <div>
+
+                <h1>
+                    Possible Matches
+                </h1>
+
+                <p>
+                    Use AI matching to find found items that may belong to a lost report.
+                </p>
+
+            </div>
+
+
+            <div class="search-profile">
+
+                <div class="profile-icon">
+
+                    <svg
+                        width="20"
+                        height="20"
+                        fill="currentColor"
+                        viewBox="0 0 24 24">
+
+                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4
+                        1.79-4 4 1.79 4 4 4zm0 2c-2.67
+                        0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+
+                    </svg>
+
+                </div>
+
+            </div>
+
+        </header>
+
+
+
+        <!-- =========================================
+             LOST ITEMS
+        ========================================== -->
+
+        <div class="matching-container">
+
+            <div class="section-header">
+
+                <h2>
+                    Lost Items
+                </h2>
+
+                <p>
+                    Select a lost item to search for possible matches.
+                </p>
+
+            </div>
+
+
+            {% if lost_reports %}
+
+                {% for report in lost_reports %}
+
+                <div class="lost-item-card">
+
+
+                    <!-- IMAGE -->
+
+                    <div class="lost-item-image">
+
+                        {% if report.image_path %}
+
+                            <img
+                                src="{{ report.image_path }}"
+                                alt="{{ report.title }}"
+                            >
+
+                        {% else %}
+
+                            <div class="no-img">
+                                No Image
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- INFORMATION -->
+
+                    <div class="lost-item-info">
+
+                        <h3>
+                            {{ report.title }}
+                        </h3>
+
+                        <p>
+                            {{ report.description }}
+                        </p>
+
+
+                        <div class="lost-item-meta">
+
+                            <span>
+                                📍 {{ report.location }}
+                            </span>
+
+                            <span>
+                                📅
+                                {% if report.reported_at %}
+                                    {{ report.reported_at }}
+                                {% else %}
+                                    Unknown Date
+                                {% endif %}
+                            </span>
+
+                            {% if report.category %}
+
+                            <span>
+                                🏷️ {{ report.category }}
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- MATCH BUTTON -->
+
+                    <div>
+
+                        <a
+                            href="{{ url_for('matching_page', id=report.id) }}"
+                            class="match-button">
+
+                            🔍 Find Matches
+
+                        </a>
+
+                    </div>
+
+                </div>
+
+                {% endfor %}
+
+
+            {% else %}
+
+                <div class="empty-state">
+
+                    <h3>
+                        No lost items found
+                    </h3>
+
+                    <p>
+                        Report a lost item first to search for possible matches.
+                    </p>
+
+                </div>
+
+            {% endif %}
+
+
+
+            <!-- =========================================
+                 MATCH RESULTS
+            ========================================== -->
+
+            {% if selected_report %}
+
+            <div class="results-section">
+
+
+                <div class="results-header">
+
+                    <div>
+
+                        <h2>
+                            Possible Matches
+                        </h2>
+
+                        <div class="results-count">
+
+                            Matches for:
+                            <strong>
+                                {{ selected_report.title }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {% if matches %}
+
+
+                    {% for match in matches %}
+
+                    <div class="match-card">
+
+
+                        <!-- FOUND ITEM IMAGE -->
+
+                        <div class="match-image">
+
+                            {% if match.report.image_path %}
+
+                                <img
+                                    src="{{ match.report.image_path }}"
+                                    alt="{{ match.report.title }}"
+                                >
+
+                            {% else %}
+
+                                <span class="no-img">
+                                    No Image
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+
+                        <!-- FOUND ITEM INFORMATION -->
+
+                        <div class="match-info">
+
+                            <h3>
+                                {{ match.report.title }}
+                            </h3>
+
+
+                            {% if match.report.description %}
+
+                            <p class="match-description">
+
+                                {{ match.report.description }}
+
+                            </p>
+
+                            {% endif %}
+
+
+                            <div class="match-meta">
+
+                                {% if match.report.location %}
+
+                                <span>
+                                    📍 {{ match.report.location }}
+                                </span>
+
+                                {% endif %}
+
+
+                                {% if match.report.reported_at %}
+
+                                <span>
+                                    📅 {{ match.report.reported_at }}
+                                </span>
+
+                                {% endif %}
+
+
+                                {% if match.report.category %}
+
+                                <span>
+                                    🏷️ {{ match.report.category }}
+                                </span>
+
+                                {% endif %}
+
+                            </div>
+
+
+                            <!-- SCORE BREAKDOWN -->
+
+                            {% if match.details %}
+
+                            <div class="score-details">
+
+                                <span class="score-detail">
+                                    Category:
+                                    {{ match.details.category_score }}%
+                                </span>
+
+                                <span class="score-detail">
+                                    Color:
+                                    {{ match.details.color_score }}%
+                                </span>
+
+                                <span class="score-detail">
+                                    Description:
+                                    {{ match.details.description_score }}%
+                                </span>
+
+                                <span class="score-detail">
+                                    Location:
+                                    {{ match.details.location_score }}%
+                                </span>
+
+                                <span class="score-detail">
+                                    Time:
+                                    {{ match.details.time_score }}%
+                                </span>
+
+                            </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+
+                        <!-- MATCH SCORE -->
+
+                        <div class="match-score-box">
+
+                            <div class="match-score">
+
+                                {{ match.score }}%
+
+                            </div>
+
+
+                            {% if match.match_level|lower == 'high' %}
+
+                                <span class="match-level match-high">
+                                    HIGH MATCH
+                                </span>
+
+                            {% elif match.match_level|lower == 'medium' %}
+
+                                <span class="match-level match-medium">
+                                    MEDIUM MATCH
+                                </span>
+
+                            {% else %}
+
+                                <span class="match-level match-low">
+                                    LOW MATCH
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                    </div>
+
+                    {% endfor %}
+
+
+                {% else %}
+
+                    <div class="empty-state">
+
+                        <h3>
+                            No Possible Matches
+                        </h3>
+
+                        <p>
+                            No found items currently meet the matching threshold
+                            for this lost item.
+                        </p>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            {% endif %}
+
+        </div>
+
+    </main>
+
+</div>
+
+</body>
+</html>

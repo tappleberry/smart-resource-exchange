@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>{{ report.title }} - Lost & Found</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f8f8fc;
+            color: #1f2937;
+        }
+
+        .layout {
+            min-height: 100vh;
+            display: flex;
+        }
+
+        /* ================= SIDEBAR ================= */
+
+        .sidebar {
+            width: 250px;
+            background-color: white;
+            border-right: 1px solid #e5e7eb;
+            padding: 25px 20px;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+        }
+
+        .logo h2 {
+            margin: 0 0 35px;
+            font-size: 21px;
+            color: #111827;
+        }
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .menu-item {
+            text-decoration: none;
+            color: #4b5563;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .menu-item:hover {
+            background-color: #f3f4f6;
+        }
+
+        .menu-item.active {
+            background-color: #eef2ff;
+            color: #4f46e5;
+            font-weight: 600;
+        }
+
+        /* ================= MAIN ================= */
+
+        .content {
+            margin-left: 250px;
+            width: calc(100% - 250px);
+            padding: 35px 45px;
+        }
+
+        .top-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        .top-header h1 {
+            margin: 0 0 7px;
+            font-size: 30px;
+            color: #111827;
+        }
+
+        .top-header p {
+            margin: 0;
+            color: #6b7280;
+        }
+
+        .back-button {
+            text-decoration: none;
+            color: #4f46e5;
+            font-weight: 600;
+            padding: 10px 16px;
+            border: 1px solid #e5e7eb;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .back-button:hover {
+            background-color: #f5f3ff;
+        }
+
+        /* ================= DETAIL CARD ================= */
+
+        .detail-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            overflow: hidden;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .detail-top {
+            display: grid;
+            grid-template-columns: 45% 55%;
+            min-height: 430px;
+        }
+
+        /* ================= IMAGE ================= */
+
+        .image-section {
+            background-color: #f3f4f6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 430px;
+        }
+
+        .image-section img {
+            width: 100%;
+            height: 100%;
+            max-height: 500px;
+            object-fit: contain;
+            display: block;
+        }
+
+        .no-image {
+            width: 100%;
+            height: 100%;
+            min-height: 430px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #9ca3af;
+            font-size: 16px;
+        }
+
+        /* ================= INFORMATION ================= */
+
+        .info-section {
+            padding: 35px;
+        }
+
+        .title-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .title-row h2 {
+            margin: 0;
+            font-size: 28px;
+            color: #111827;
+        }
+
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .badge-lost {
+            background-color: #fee2e2;
+            color: #b91c1c;
+        }
+
+        .badge-found {
+            background-color: #dcfce7;
+            color: #15803d;
+        }
+
+        .description {
+            color: #4b5563;
+            line-height: 1.7;
+            margin-bottom: 28px;
+        }
+
+        /* ================= DETAILS ================= */
+
+        .details-list {
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 15px 0;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .detail-label {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .detail-value {
+            color: #111827;
+            font-weight: 500;
+            text-align: right;
+        }
+
+        /* ================= REPORTER ================= */
+
+        .reporter-section {
+            padding: 28px 35px;
+            border-top: 1px solid #e5e7eb;
+            background-color: #fafafa;
+        }
+
+        .reporter-section h3 {
+            margin: 0 0 15px;
+            font-size: 18px;
+        }
+
+        .reporter {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .profile-circle {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background-color: #e0e7ff;
+            color: #4338ca;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .reporter-name {
+            font-weight: 600;
+            color: #111827;
+        }
+
+        /* ================= ACTIONS ================= */
+
+        .actions {
+            padding: 25px 35px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 11px 18px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background-color: #4f46e5;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #4338ca;
+        }
+
+        .btn-secondary {
+            background-color: white;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+
+        .btn-secondary:hover {
+            background-color: #f3f4f6;
+        }
+
+        /* ================= RESPONSIVE ================= */
+
+        @media (max-width: 850px) {
+
+            .sidebar {
+                display: none;
+            }
+
+            .content {
+                margin-left: 0;
+                width: 100%;
+                padding: 25px;
+            }
+
+            .detail-top {
+                grid-template-columns: 1fr;
+            }
+
+            .image-section {
+                min-height: 350px;
+            }
+
+            .no-image {
+                min-height: 350px;
+            }
+
+        }
+
+        @media (max-width: 550px) {
+
+            .content {
+                padding: 15px;
+            }
+
+            .top-header {
+                align-items: flex-start;
+                gap: 15px;
+                flex-direction: column;
+            }
+
+            .info-section {
+                padding: 22px;
+            }
+
+            .title-row {
+                flex-direction: column;
+            }
+
+            .detail-row {
+                flex-direction: column;
+                gap: 5px;
+            }
+
+            .detail-value {
+                text-align: left;
+            }
+
+            .reporter-section,
+            .actions {
+                padding: 22px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<div class="layout">
+
+
+    <!-- ================= SIDEBAR ================= -->
+
+    <aside class="sidebar">
+
+        <div class="logo">
+            <h2>Smart Campus Hub</h2>
+        </div>
+
+
+        <nav class="menu">
+
+            <a href="/" class="menu-item">
+                Home
+            </a>
+
+            <a href="/marketplace/" class="menu-item">
+                Marketplace
+            </a>
+
+            <a href="/sell-rent/" class="menu-item">
+                Sell / Rent
+            </a>
+
+            <a href="/lost_found/" class="menu-item active">
+                Lost & Found
+            </a>
+
+        </nav>
+
+    </aside>
+
+
+    <!-- ================= MAIN CONTENT ================= -->
+
+    <main class="content">
+
+
+        <!-- HEADER -->
+
+        <header class="top-header">
+
+            <div>
+
+                <h1>Lost & Found</h1>
+
+                <p>
+                    View complete information about this report.
+                </p>
+
+            </div>
+
+
+            <a href="/lost_found/"
+               class="back-button">
+
+                ← Back to Lost & Found
+
+            </a>
+
+        </header>
+
+
+        <!-- ================= DETAIL CARD ================= -->
+
+        <div class="detail-card">
+
+
+            <div class="detail-top">
+
+
+                <!-- ================= IMAGE ================= -->
+
+                <div class="image-section">
+
+                    {% if report.image_path %}
+
+                        <img
+                            src="{{ url_for('static', filename=report.image_path) }}"
+                            alt="{{ report.title }}"
+                        >
+
+                    {% else %}
+
+                        <div class="no-image">
+                            No image available
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- ================= INFORMATION ================= -->
+
+                <div class="info-section">
+
+
+                    <div class="title-row">
+
+                        <h2>
+                            {{ report.title }}
+                        </h2>
+
+
+                        {% if report.report_type|lower == 'lost' %}
+
+                            <span class="badge badge-lost">
+                                Lost
+                            </span>
+
+                        {% else %}
+
+                            <span class="badge badge-found">
+                                Found
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <!-- DESCRIPTION -->
+
+                    {% if report.description %}
+
+                        <p class="description">
+                            {{ report.description }}
+                        </p>
+
+                    {% else %}
+
+                        <p class="description">
+                            No description provided.
+                        </p>
+
+                    {% endif %}
+
+
+                    <!-- DETAILS -->
+
+                    <div class="details-list">
+
+
+                        <!-- REPORT ID -->
+
+                        <div class="detail-row">
+
+                            <span class="detail-label">
+                                Report ID
+                            </span>
+
+                            <span class="detail-value">
+                                #{{ report.id }}
+                            </span>
+
+                        </div>
+
+
+                        <!-- CATEGORY -->
+
+                        <div class="detail-row">
+
+                            <span class="detail-label">
+                                Category
+                            </span>
+
+                            <span class="detail-value">
+
+                                {% if report.category %}
+                                    {{ report.category }}
+                                {% else %}
+                                    Not specified
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- LOCATION -->
+
+                        <div class="detail-row">
+
+                            <span class="detail-label">
+                                Location
+                            </span>
+
+                            <span class="detail-value">
+
+                                {% if report.location %}
+                                    📍 {{ report.location }}
+                                {% else %}
+                                    Not specified
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- DATE -->
+
+                        <div class="detail-row">
+
+                            <span class="detail-label">
+                                Reported On
+                            </span>
+
+                            <span class="detail-value">
+
+                                {% if report.reported_at %}
+                                    {{ report.reported_at }}
+                                {% else %}
+                                    Not specified
+                                {% endif %}
+
+                            </span>
+
+                        </div>
+
+
+                        <!-- STATUS -->
+
+                        <div class="detail-row">
+
+                            <span class="detail-label">
+                                Status
+                            </span>
+
+                            <span class="detail-value">
+                                {{ report.status|capitalize }}
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= REPORTER ================= -->
+
+            <div class="reporter-section">
+
+                <h3>
+                    Reported By
+                </h3>
+
+
+                <div class="reporter">
+
+                    <div class="profile-circle">
+
+                        {% if report.user_name %}
+
+                            {{ report.user_name[0]|upper }}
+
+                        {% else %}
+
+                            U
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div>
+
+                        <div class="reporter-name">
+
+                            {% if report.user_name %}
+
+                                {{ report.user_name }}
+
+                            {% else %}
+
+                                Unknown User
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ================= ACTIONS ================= -->
+
+            <div class="actions">
+
+                <a href="/lost_found/"
+                   class="btn btn-secondary">
+
+                    ← Back
+
+                </a>
+
+
+                {% if report.report_type|lower == 'lost' %}
+
+                    <a href="/lost_found/matching/?id={{ report.id }}"
+                       class="btn btn-primary">
+
+                        Find Possible Matches
+
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+
+        </div>
+
+
+    </main>
+
+</div>
+
+</body>
+
+</html>

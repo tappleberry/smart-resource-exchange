@@ -424,10 +424,65 @@ def report_lost():
 def report_found():
     return render_template("report_found.html")
 
+@app.route("/lost_found/matching/")
+def matching_page():
 
-@app.route("/lost_found/<int:report_id>")
+    # Get all lost reports
+    lost_reports = database.get_lost_found_reports("lost")
+
+    # Check whether a particular lost item was selected
+    selected_id = request.args.get("id")
+
+    selected_report = None
+    matches = []
+
+    # If user selected a lost item
+    if selected_id:
+        # Find selected lost report
+        for report in lost_reports:
+
+            report_id = report["id"]
+
+            if str(report_id) == str(selected_id):
+                selected_report = report
+                break
+
+        # Run matching
+
+        if selected_report:
+
+            # Get all found reports
+            found_reports = database.get_lost_found_reports("found")
+
+            # Run your matching algorithm
+            matches = find_best_matches(
+                selected_report,
+                found_reports,
+                minimum_score=60
+            )
+
+    # Render matching page
+
+    return render_template(
+        "match.html",
+        lost_reports=lost_reports,
+        selected_report=selected_report,
+        matches=matches
+    )
+
+
+@app.route("/lost_found/report/<int:report_id>/")
 def lost_found_details(report_id):
-    return f"Lost & Found details page - placeholder for report {report_id}"
+
+    report = database.get_lost_found_report(report_id)
+
+    if report is None:
+        return "Report Not Found", 404
+
+    return render_template(
+        "lost_found_details.html",
+        report=report
+    )
 
 
 # testing -----------------------------------------------------------------------------------------
