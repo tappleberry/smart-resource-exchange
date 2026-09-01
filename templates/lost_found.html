@@ -1,106 +1,1058 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
+
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
     <title>Lost & Found - Smart Campus Hub</title>
 
     <link rel="stylesheet"
           href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+
+        /* =====================================================
+           RESET
+        ===================================================== */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        /* =====================================================
+           BODY
+        ===================================================== */
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f7f8fc;
+            color: #1f2937;
+        }
+
+
+        /* =====================================================
+           LAYOUT
+        ===================================================== */
+
+        .layout {
+            min-height: 100vh;
+            display: flex;
+        }
+
+
+        /* =====================================================
+           SIDEBAR
+        ===================================================== */
+
+        .sidebar {
+            width: 250px;
+            min-height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+
+            background: #ffffff;
+
+            border-right: 1px solid #e5e7eb;
+
+            padding: 28px 18px;
+
+            display: flex;
+            flex-direction: column;
+        }
+
+
+        .logo {
+            padding: 0 12px;
+            margin-bottom: 35px;
+        }
+
+
+        .logo h2 {
+            font-size: 20px;
+            color: #111827;
+            line-height: 1.3;
+        }
+
+
+        /* =====================================================
+           MENU
+        ===================================================== */
+
+        .menu {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+
+        .menu-item {
+            display: flex;
+            align-items: center;
+
+            padding: 12px 14px;
+
+            border-radius: 9px;
+
+            color: #4b5563;
+
+            text-decoration: none;
+
+            font-size: 14px;
+            font-weight: 500;
+
+            transition: 0.2s ease;
+        }
+
+
+        .menu-item:hover {
+            background: #f3f4f6;
+            color: #111827;
+        }
+
+
+        .menu-item.active {
+            background: #eef2ff;
+            color: #4f46e5;
+            font-weight: 600;
+        }
+
+
+        /* =====================================================
+           HELP BOX
+        ===================================================== */
+
+        .help-box {
+            margin-top: auto;
+
+            background: #f8f7ff;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 12px;
+
+            padding: 18px;
+        }
+
+
+        .help-box h3 {
+            font-size: 14px;
+            line-height: 1.4;
+
+            color: #111827;
+
+            margin-bottom: 8px;
+        }
+
+
+        .help-box p {
+            font-size: 12px;
+            line-height: 1.5;
+
+            color: #6b7280;
+
+            margin-bottom: 15px;
+        }
+
+
+        .help-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+
+        .btn {
+            display: block;
+
+            width: 100%;
+
+            padding: 9px 10px;
+
+            border-radius: 7px;
+
+            text-align: center;
+
+            text-decoration: none;
+
+            font-size: 12px;
+            font-weight: 600;
+
+            transition: 0.2s ease;
+        }
+
+
+        .btn-primary {
+            background: #4f46e5;
+            color: white;
+        }
+
+
+        .btn-primary:hover {
+            background: #4338ca;
+        }
+
+
+        .btn-secondary {
+            background: white;
+            color: #374151;
+
+            border: 1px solid #d1d5db;
+        }
+
+
+        .btn-secondary:hover {
+            background: #f3f4f6;
+        }
+
+
+        /* =====================================================
+           MAIN CONTENT
+        ===================================================== */
+
+        .content {
+            width: calc(100% - 250px);
+
+            margin-left: 250px;
+
+            padding: 35px 45px;
+        }
+
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .top-header {
+            display: flex;
+
+            align-items: center;
+            justify-content: space-between;
+
+            gap: 25px;
+
+            margin-bottom: 30px;
+        }
+
+
+        .header-text h1 {
+            font-size: 30px;
+
+            color: #111827;
+
+            margin-bottom: 7px;
+        }
+
+
+        .header-text p {
+            font-size: 14px;
+
+            color: #6b7280;
+        }
+
+
+        /* =====================================================
+           SEARCH
+        ===================================================== */
+
+        .search-profile {
+            display: flex;
+
+            align-items: center;
+
+            gap: 12px;
+        }
+
+
+        .search-profile form {
+            margin: 0;
+        }
+
+
+        .search-bar {
+            width: 280px;
+
+            height: 42px;
+
+            padding: 0 15px;
+
+            border: 1px solid #dfe3ea;
+
+            border-radius: 9px;
+
+            background: white;
+
+            outline: none;
+
+            font-size: 13px;
+
+            color: #374151;
+
+            transition: 0.2s ease;
+        }
+
+
+        .search-bar:focus {
+            border-color: #818cf8;
+
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.08);
+        }
+
+
+        .profile-icon {
+            width: 42px;
+            height: 42px;
+
+            border-radius: 50%;
+
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            color: #6b7280;
+        }
+
+
+        /* =====================================================
+           STATISTICS
+        ===================================================== */
+
+        .stats-row {
+            display: grid;
+
+            grid-template-columns: repeat(3, 1fr);
+
+            gap: 18px;
+
+            margin-bottom: 32px;
+        }
+
+
+        .stat-card {
+            min-height: 110px;
+
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 12px;
+
+            padding: 20px;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 16px;
+
+            transition: 0.2s ease;
+        }
+
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+
+            box-shadow: 0 7px 20px rgba(0, 0, 0, 0.05);
+        }
+
+
+        .stat-icon {
+            width: 48px;
+            height: 48px;
+
+            flex-shrink: 0;
+
+            border-radius: 10px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        .lost-icon {
+            background: #fff1f2;
+            color: #e11d48;
+        }
+
+
+        .found-icon {
+            background: #ecfdf5;
+            color: #059669;
+        }
+
+
+        .match-icon {
+            background: #eef2ff;
+            color: #4f46e5;
+        }
+
+
+        .stat-info h2 {
+            font-size: 25px;
+
+            color: #111827;
+
+            margin-bottom: 4px;
+        }
+
+
+        .stat-info p {
+            font-size: 12px;
+
+            color: #6b7280;
+        }
+
+
+        /* =====================================================
+           MATCHES CARD
+        ===================================================== */
+
+        .matches-card {
+            text-decoration: none;
+
+            color: inherit;
+
+            cursor: pointer;
+        }
+
+
+        .matches-card:hover {
+            border-color: #c7d2fe;
+        }
+
+
+        .matches-card .stat-info h2 {
+            color: #4f46e5;
+
+            font-size: 17px;
+
+            margin-bottom: 5px;
+        }
+
+
+        /* =====================================================
+           REPORT SECTION
+        ===================================================== */
+
+        .reports-section {
+            background: transparent;
+        }
+
+
+        .tabs {
+            display: flex;
+
+            align-items: center;
+
+            margin-bottom: 16px;
+
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+
+        .tab {
+            background: none;
+
+            border: none;
+
+            padding: 0 4px 12px;
+
+            color: #4f46e5;
+
+            font-size: 14px;
+
+            font-weight: 600;
+
+            border-bottom: 2px solid #4f46e5;
+        }
+
+
+        /* =====================================================
+           REPORT LIST
+        ===================================================== */
+
+        .report-list {
+            display: flex;
+
+            flex-direction: column;
+
+            gap: 14px;
+        }
+
+
+        .report-item {
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 12px;
+
+            padding: 16px;
+
+            display: grid;
+
+            grid-template-columns: 120px 1fr auto;
+
+            gap: 20px;
+
+            align-items: center;
+
+            transition: 0.2s ease;
+        }
+
+
+        .report-item:hover {
+            border-color: #d1d5db;
+
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+        }
+
+
+        /* =====================================================
+           REPORT IMAGE
+        ===================================================== */
+
+        .report-img {
+            width: 120px;
+            height: 100px;
+
+            border-radius: 9px;
+
+            overflow: hidden;
+
+            background: #f3f4f6;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        .report-img img {
+            width: 100%;
+            height: 100%;
+
+            object-fit: cover;
+
+            display: block;
+        }
+
+
+        .no-img {
+            width: 100%;
+            height: 100%;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+        }
+
+
+        /* =====================================================
+           REPORT DETAILS
+        ===================================================== */
+
+        .report-details {
+            min-width: 0;
+        }
+
+
+        .report-title-row {
+            display: flex;
+
+            align-items: center;
+
+            gap: 10px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .report-title-row h3 {
+            font-size: 17px;
+
+            color: #111827;
+
+            white-space: nowrap;
+
+            overflow: hidden;
+
+            text-overflow: ellipsis;
+        }
+
+
+        /* =====================================================
+           BADGES
+        ===================================================== */
+
+        .badge {
+            display: inline-flex;
+
+            align-items: center;
+
+            padding: 4px 9px;
+
+            border-radius: 20px;
+
+            font-size: 10px;
+
+            font-weight: 700;
+
+            text-transform: uppercase;
+
+            letter-spacing: 0.3px;
+
+            flex-shrink: 0;
+        }
+
+
+        .badge-lost {
+            background: #fff1f2;
+
+            color: #be123c;
+        }
+
+
+        .badge-found {
+            background: #ecfdf5;
+
+            color: #047857;
+        }
+
+
+        /* =====================================================
+           DESCRIPTION
+        ===================================================== */
+
+        .desc {
+            color: #6b7280;
+
+            font-size: 13px;
+
+            line-height: 1.5;
+
+            margin-bottom: 11px;
+
+            display: -webkit-box;
+
+            -webkit-line-clamp: 2;
+
+            -webkit-box-orient: vertical;
+
+            overflow: hidden;
+        }
+
+
+        /* =====================================================
+           META
+        ===================================================== */
+
+        .meta-info {
+            display: flex;
+
+            align-items: center;
+
+            flex-wrap: wrap;
+
+            gap: 18px;
+
+            color: #6b7280;
+
+            font-size: 11px;
+        }
+
+
+        /* =====================================================
+           ACTION
+        ===================================================== */
+
+        .report-actions {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: flex-end;
+        }
+
+
+        .btn-outline {
+            display: inline-block;
+
+            padding: 9px 14px;
+
+            border-radius: 7px;
+
+            border: 1px solid #d1d5db;
+
+            background: white;
+
+            color: #374151;
+
+            text-decoration: none;
+
+            font-size: 12px;
+
+            font-weight: 600;
+
+            white-space: nowrap;
+
+            transition: 0.2s ease;
+        }
+
+
+        .btn-outline:hover {
+            background: #f5f3ff;
+
+            border-color: #c7d2fe;
+
+            color: #4f46e5;
+        }
+
+
+        /* =====================================================
+           EMPTY STATE
+        ===================================================== */
+
+        .empty-state {
+            background: white;
+
+            border: 1px solid #e5e7eb;
+
+            border-radius: 12px;
+
+            padding: 55px 20px;
+
+            text-align: center;
+        }
+
+
+        .empty-state h3 {
+            color: #374151;
+
+            font-size: 17px;
+
+            margin-bottom: 7px;
+        }
+
+
+        .empty-state p {
+            color: #9ca3af;
+
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE - TABLET
+        ===================================================== */
+
+        @media (max-width: 1000px) {
+
+            .content {
+                padding: 30px;
+            }
+
+
+            .stats-row {
+                grid-template-columns: 1fr 1fr;
+            }
+
+
+            .stats-row .stat-card:last-child {
+                grid-column: span 2;
+            }
+
+
+            .top-header {
+                align-items: flex-start;
+
+                flex-direction: column;
+            }
+
+
+            .search-profile {
+                width: 100%;
+            }
+
+
+            .search-profile form {
+                flex: 1;
+            }
+
+
+            .search-bar {
+                width: 100%;
+            }
+
+        }
+
+
+        /* =====================================================
+           RESPONSIVE - MOBILE
+        ===================================================== */
+
+        @media (max-width: 700px) {
+
+            .sidebar {
+                display: none;
+            }
+
+
+            .content {
+                width: 100%;
+
+                margin-left: 0;
+
+                padding: 22px 18px;
+            }
+
+
+            .top-header {
+                margin-bottom: 24px;
+            }
+
+
+            .header-text h1 {
+                font-size: 25px;
+            }
+
+
+            .stats-row {
+                grid-template-columns: 1fr;
+            }
+
+
+            .stats-row .stat-card:last-child {
+                grid-column: auto;
+            }
+
+
+            .report-item {
+                grid-template-columns: 85px 1fr;
+
+                gap: 14px;
+            }
+
+
+            .report-img {
+                width: 85px;
+                height: 85px;
+            }
+
+
+            .report-actions {
+                grid-column: 2;
+
+                justify-content: flex-start;
+            }
+
+        }
+
+
+        /* =====================================================
+           SMALL MOBILE
+        ===================================================== */
+
+        @media (max-width: 450px) {
+
+            .search-profile {
+                flex-direction: column;
+
+                align-items: stretch;
+            }
+
+
+            .profile-icon {
+                display: none;
+            }
+
+
+            .report-item {
+                grid-template-columns: 1fr;
+            }
+
+
+            .report-img {
+                width: 100%;
+                height: 180px;
+            }
+
+
+            .report-actions {
+                grid-column: auto;
+            }
+
+
+            .btn-outline {
+                width: 100%;
+
+                text-align: center;
+            }
+
+        }
+
+    </style>
+
 </head>
+
 
 <body>
 
+
 <div class="layout">
 
-    <!-- ================= SIDEBAR ================= -->
+
+    <!-- =====================================================
+         SIDEBAR
+    ====================================================== -->
 
     <aside class="sidebar">
 
+
         <div class="logo">
-            <h2>Smart Campus Hub</h2>
+
+            <h2>
+                Smart Campus Hub
+            </h2>
+
         </div>
+
 
         <nav class="menu">
 
-            <a href="/" class="menu-item">
+
+            <a href="/"
+               class="menu-item">
+
                 Home
+
             </a>
 
-            <a href="/marketplace/" class="menu-item">
+
+            <a href="/marketplace/"
+               class="menu-item">
+
                 Marketplace
+
             </a>
 
-            <a href="/sell-rent/" class="menu-item">
+
+            <a href="/sell-rent/"
+               class="menu-item">
+
                 Sell / Rent
+
             </a>
 
-            <a href="/lost_found/" class="menu-item active">
+
+            <a href="/lost_found/"
+               class="menu-item active">
+
                 Lost & Found
+
             </a>
+
 
         </nav>
 
 
-        <!-- Report buttons -->
+        <!-- HELP BOX -->
 
-       <div class="help-box">
+        <div class="help-box">
+
 
             <h3>
                 Help someone find what they've lost!
             </h3>
 
+
             <p>
                 Report lost items or help others by reporting found items.
             </p>
 
+
             <div class="help-actions">
 
+
                 <a href="/lost_found/report/lost"
-                class="btn btn-primary">
+                   class="btn btn-primary">
+
                     Report Lost Item
+
                 </a>
 
+
                 <a href="/lost_found/report/found"
-                class="btn btn-secondary">
+                   class="btn btn-secondary">
+
                     Report Found Item
+
                 </a>
+
 
             </div>
 
+
         </div>
+
 
     </aside>
 
 
-    <!-- ================= MAIN CONTENT ================= -->
+
+    <!-- =====================================================
+         MAIN CONTENT
+    ====================================================== -->
 
     <main class="content">
 
 
-        <!-- Header -->
+        <!-- HEADER -->
 
         <header class="top-header">
 
-            <div>
+
+            <div class="header-text">
+
 
                 <h1>
                     Lost & Found
                 </h1>
 
+
                 <p>
                     Report lost items or help others by reporting found items.
                 </p>
 
+
             </div>
 
 
-            <!-- SEARCH PLACEHOLDER -->
+            <!-- SEARCH -->
 
             <div class="search-profile">
 
-                <form action="/lost_found/" method="GET">
+
+                <form action="/lost_found/"
+                      method="GET">
+
 
                     <input
                         type="text"
@@ -110,10 +1062,12 @@
                         value="{{ search|default('', true) }}"
                     >
 
+
                 </form>
 
 
                 <div class="profile-icon">
+
 
                     <svg
                         width="20"
@@ -121,30 +1075,39 @@
                         fill="currentColor"
                         viewBox="0 0 24 24">
 
-                        <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4
-                        1.79-4 4 1.79 4 4 4zm0 2c-2.67
-                        0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        <path d="M12 12c2.21 0 4-1.79
+                        4-4s-1.79-4-4-4-4
+                        1.79-4 4 1.79 4 4 4zm0
+                        2c-2.67 0-8 1.34-8
+                        4v2h16v-2c0-2.66-5.33-4-8-4z"/>
 
                     </svg>
 
+
                 </div>
 
+
             </div>
+
 
         </header>
 
 
 
-        <!-- ================= STATISTICS ================= -->
+        <!-- =====================================================
+             STATISTICS
+        ====================================================== -->
 
         <div class="stats-row">
 
 
-            <!-- LOST COUNT -->
+            <!-- LOST -->
 
             <div class="stat-card">
 
+
                 <div class="stat-icon lost-icon">
+
 
                     <svg
                         width="24"
@@ -152,37 +1115,45 @@
                         fill="currentColor"
                         viewBox="0 0 24 24">
 
-                        <path d="M12 2C6.48 2 2 6.48 2
-                        12s4.48 10 10 10 10-4.48
-                        10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        <path d="M12 2C6.48 2 2 6.48
+                        2 12s4.48 10 10 10
+                        10-4.48 10-10S17.52
+                        2 12 2zm1 15h-2v-2h2v2zm0
+                        -4h-2V7h2v6z"/>
 
                     </svg>
 
+
                 </div>
+
 
                 <div class="stat-info">
 
-                    <!-- DATABASE VALUE -->
 
                     <h2>
                         {{ lost_count|default(0, true) }}
                     </h2>
 
+
                     <p>
                         Lost Items
                     </p>
 
+
                 </div>
+
 
             </div>
 
 
 
-            <!-- FOUND COUNT -->
+            <!-- FOUND -->
 
             <div class="stat-card">
 
+
                 <div class="stat-icon found-icon">
+
 
                     <svg
                         width="24"
@@ -190,38 +1161,47 @@
                         fill="currentColor"
                         viewBox="0 0 24 24">
 
-                        <path d="M12 2C6.48 2 2 6.48 2
-                        12s4.48 10 10 10 10-4.48
-                        10-10S17.52 2 12 2zm-2
-                        15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        <path d="M12 2C6.48 2 2 6.48
+                        2 12s4.48 10 10 10
+                        10-4.48 10-10S17.52
+                        2 12 2zm-2 15l-5-5
+                        1.41-1.41L10 14.17l7.59-7.59
+                        L19 8l-9 9z"/>
 
                     </svg>
 
+
                 </div>
+
 
                 <div class="stat-info">
 
-                    <!-- DATABASE VALUE -->
 
                     <h2>
                         {{ found_count|default(0, true) }}
                     </h2>
 
+
                     <p>
                         Found Items
                     </p>
 
+
                 </div>
+
 
             </div>
 
 
 
-            <!-- POSSIBLE MATCHES -->
+            <!-- MATCHES -->
 
-            <div class="stat-card">
+            <a href="/lost_found/matching/"
+               class="stat-card matches-card">
+
 
                 <div class="stat-icon match-icon">
+
 
                     <svg
                         width="24"
@@ -231,54 +1211,57 @@
 
                         <path d="M16 11c1.66 0 2.99-1.34
                         2.99-3S17.66 5 16 5c-1.66
-                        0-3 1.34-3 3s1.34 3 3 3zm-8
-                        0c1.66 0 2.99-1.34 2.99-3S9.66
-                        5 8 5C6.34 5 5 6.34 5 8s1.34
-                        3 3 3zm0 2c-2.33 0-7 1.17-7
+                        0-3 1.34-3 3s1.34 3
+                        3 3zm-8 0c1.66 0
+                        2.99-1.34 2.99-3S9.66
+                        5 8 5C6.34 5 5 6.34
+                        5 8s1.34 3 3 3zm0
+                        2c-2.33 0-7 1.17-7
                         3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8
-                        0c-.29 0-.62.02-.97.05 1.16.84
-                        1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/>
+                        0c-.29 0-.62.02-.97.05
+                        1.16.84 1.97 1.97
+                        1.97 3.45V19h6v-2.5
+                        c0-2.33-4.67-3.5-7-3.5z"/>
 
                     </svg>
 
+
                 </div>
+
 
                 <div class="stat-info">
 
-                    <!--
-                        PLACEHOLDER FOR MATCHING SYSTEM.
-
-                        Later app.py can send:
-
-                        match_count=...
-
-                        Until then this displays 0.
-                    -->
 
                     <h2>
-                        {{ match_count|default(0, true) }}
+                        Matches
                     </h2>
 
+
                     <p>
-                        Possible Matches
+                        Find Possible Matches
                     </p>
+
 
                 </div>
 
-            </div>
+
+            </a>
+
 
         </div>
 
 
 
-        <!-- ================= REPORTS ================= -->
+        <!-- =====================================================
+             REPORTS
+        ====================================================== -->
 
         <div class="reports-section">
 
 
             <div class="tabs">
 
-                <button class="tab active">
+                <button class="tab">
                     All Reports
                 </button>
 
@@ -289,10 +1272,10 @@
             <div class="report-list">
 
 
-                <!-- ================= DATABASE LOOP ================= -->
-
                 {% for report in reports %}
 
+
+                <!-- REPORT -->
 
                 <div class="report-item">
 
@@ -301,16 +1284,21 @@
 
                     <div class="report-img">
 
+
                         {% if report.image_path %}
+
 
                             <img
                                 src="{{ report.image_path }}"
                                 alt="{{ report.title }}"
                             >
 
+
                         {% else %}
 
+
                             <div class="no-img">
+
 
                                 <svg
                                     width="32"
@@ -325,15 +1313,18 @@
 
                                 </svg>
 
+
                             </div>
 
+
                         {% endif %}
+
 
                     </div>
 
 
 
-                    <!-- REPORT INFORMATION -->
+                    <!-- DETAILS -->
 
                     <div class="report-details">
 
@@ -341,26 +1332,26 @@
                         <div class="report-title-row">
 
 
-                            <!-- DATABASE -->
-
                             <h3>
                                 {{ report.title }}
                             </h3>
 
 
-                            <!-- LOST / FOUND -->
-
                             {% if report.report_type|lower == 'lost' %}
+
 
                                 <span class="badge badge-lost">
                                     Lost
                                 </span>
 
+
                             {% else %}
+
 
                                 <span class="badge badge-found">
                                     Found
                                 </span>
+
 
                             {% endif %}
 
@@ -368,8 +1359,6 @@
                         </div>
 
 
-
-                        <!-- DESCRIPTION -->
 
                         <p class="desc">
 
@@ -379,15 +1368,11 @@
 
 
 
-                        <!-- META INFORMATION -->
-
                         <div class="meta-info">
 
 
                             <span>
-
                                 📍 {{ report.location }}
-
                             </span>
 
 
@@ -415,23 +1400,13 @@
 
 
 
-                    <!-- ================= ACTIONS ================= -->
+                    <!-- VIEW DETAILS -->
 
                     <div class="report-actions">
 
 
-                        <!--
-                            PLACEHOLDER FOR DETAILS PAGE.
-
-                            Later create a route such as:
-
-                            /lost_found/<id>
-
-                            Then this link will work.
-                        -->
-
                         <a
-                            href="/lost_found/{{ report.id }}"
+                            href="/lost_found/report/{{ report.id }}/"
                             class="btn-outline">
 
                             View Details
@@ -449,36 +1424,42 @@
 
 
 
-                <!-- ================= EMPTY DATABASE ================= -->
+                <!-- EMPTY STATE -->
 
                 {% if not reports %}
 
-                <div class="report-item">
 
-                    <div class="report-details">
+                <div class="empty-state">
 
-                        <h3>
-                            No reports found
-                        </h3>
 
-                        <p class="desc">
-                            There are currently no lost or found item reports.
-                        </p>
+                    <h3>
+                        No reports found
+                    </h3>
 
-                    </div>
+
+                    <p>
+                        There are currently no lost or found item reports.
+                    </p>
+
 
                 </div>
+
 
                 {% endif %}
 
 
             </div>
 
+
         </div>
+
 
     </main>
 
+
 </div>
 
+
 </body>
+
 </html>
