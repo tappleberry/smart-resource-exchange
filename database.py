@@ -1,18 +1,10 @@
 import sqlite3
 
 DATABASE_NAME = "database/campus.db"
-import os
-# import sqlite3
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DB_PATH = os.path.join(BASE_DIR, "database","campus.db")  # Replace with your actual DB filename
-SCHEMA_PATH=os.path.join(BASE_DIR, "database","schema.sql")
-connection = sqlite3.connect(DB_PATH)
-
 
 #=================  CONNECTION  =============================
 def get_connection():
-    connection = sqlite3.connect(DB_PATH)
+    connection = sqlite3.connect(DATABASE_NAME)
     connection.row_factory = sqlite3.Row
 
     connection.execute("PRAGMA foreign_keys = ON")
@@ -22,7 +14,7 @@ def initialize_database():
     connection = get_connection()
     try:
 
-        with open(SCHEMA_PATH , "r") as file:
+        with open("database/schema.sql" , "r") as file:
             schema = file.read()
 
         connection.executescript(schema)
