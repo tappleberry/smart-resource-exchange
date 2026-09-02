@@ -7,10 +7,10 @@ import json
 # Matching Weights
 # ==================================================
 
-CATEGORY_WEIGHT = 30
-COLOR_WEIGHT = 20
-DESCRIPTION_WEIGHT = 30
-LOCATION_WEIGHT = 10
+CATEGORY_WEIGHT = 25
+COLOR_WEIGHT = 5
+DESCRIPTION_WEIGHT = 40
+LOCATION_WEIGHT = 20
 TIME_WEIGHT = 10
 
 
