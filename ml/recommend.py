@@ -99,7 +99,8 @@ def generate_recommendation(
     category,
     demand_score,
     listings,
-    exam_days
+    exam_days,
+    features
 ):
     """
     Generate a complete recommendation.
@@ -127,6 +128,15 @@ def generate_recommendation(
             float(demand_score),
             2
         ),
+        # Keep the original features from demand.csv
+
+    "features": {
+        "searches": int(features.get("searches", 0) or 0),
+        "views": int(features.get("views", 0) or 0),
+        "favorites": int(features.get("favorites", 0) or 0),
+        "listings": int(features.get("listings", 0) or 0),
+        "exam_days": int(features.get("exam_days", 0) or 0)
+    },
         "listings": int(
             listings
         ),
@@ -219,7 +229,8 @@ def generate_recommendations(
             category=category,
             demand_score=demand_score,
             listings=listings,
-            exam_days=exam_days
+            exam_days=exam_days,
+            features=features
         )
 
         recommendations.append(

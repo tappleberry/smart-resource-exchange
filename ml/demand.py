@@ -38,29 +38,29 @@ def load_data():
     return df
 
 
-# --------------------------------------------------
-# Get exam days for category
-# --------------------------------------------------
+# # --------------------------------------------------
+# # Get exam days for category
+# # --------------------------------------------------
 
-def get_exam_days(category):
-    """
-    Get exam_days for a given category
-    from the demand dataset.
-    """
+# def get_exam_days(category):
+#     """
+#     Get exam_days for a given category
+#     from the demand dataset.
+#     """
 
-    df = load_data()
+#     df = load_data()
 
-    matching_rows = df[
-        df["category"].str.lower()
-        == category.lower()
-    ]
+#     matching_rows = df[
+#         df["category"].str.lower()
+#         == category.lower()
+#     ]
 
-    if matching_rows.empty:
-        return None
+#     if matching_rows.empty:
+#         return None
 
-    return int(
-        matching_rows.iloc[-1]["exam_days"]
-    )
+#     return int(
+#         matching_rows.iloc[-1]["exam_days"]
+#     )
 
 
 # --------------------------------------------------
@@ -69,44 +69,28 @@ def get_exam_days(category):
 
 def get_category_features(category):
     """
-    Get all ML features for a category.
-
-    Returns:
-        {
-            "searches": int,
-            "views": int,
-            "favorites": int,
-            "listings": int,
-            "exam_days": int
-        }
+    Get ML features for a category directly from demand.csv.
+    No database required.
     """
 
-    import database
+    df = load_data()
 
-    category_features = (
-        database.get_category_feature_data()
-    )
+    matching_rows = df[
+        df["category"].str.lower() == category.lower()
+    ]
 
-    for row in category_features:
+    if matching_rows.empty:
+        return None
 
-        if row["category"].lower() == category.lower():
+    row = matching_rows.iloc[-1]
 
-            exam_days = get_exam_days(
-                category
-            )
-
-            if exam_days is None:
-                return None
-
-            return {
-                "searches": row["searches"],
-                "views": row["views"],
-                "favorites": row["favorites"],
-                "listings": row["listings"],
-                "exam_days": exam_days
-            }
-
-    return None
+    return {
+        "searches": int(row["searches"]),
+        "views": int(row["views"]),
+        "favorites": int(row["favorites"]),
+        "listings": int(row["listings"]),
+        "exam_days": int(row["exam_days"])
+    }
 
 
 # --------------------------------------------------

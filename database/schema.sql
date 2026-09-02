@@ -87,7 +87,7 @@ CREATE TABLE IF NOT EXISTS interactions (
 
     item_id INTEGER NOT NULL,
 
-    action TEXT NOT NULL,
+    action TEXT NOT NULL CHECK (action IN ('view','favourite')),
 
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 

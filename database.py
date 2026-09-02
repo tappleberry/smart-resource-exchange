@@ -22,9 +22,6 @@ def initialize_database():
     finally:
         connection.close()
 
-if __name__ == "__main__":
-    initialize_database()
-    print("Database Initialized Successfully.")
 
 #===================    USERS   ==============================
 def create_user(name , regno , email, password_hash , department , year):
@@ -426,7 +423,7 @@ def get_lost_found_report(report_id):
 
     finally:
         connection.close()
-        
+
 #====================   ANALYTICS   ================================
 def log_search(user_id, query, category=None):
     connection = get_connection()
@@ -554,3 +551,6 @@ def get_item_interaction_stats(item_id):
     finally:
         connection.close()
 
+if __name__ == "__main__":
+    initialize_database()
+    print("Database Initialized Successfully.")
