@@ -1,0 +1,1379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Trends & Recommendations</title>
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background: #f6f7fb;
+            color: #1f2937;
+            min-height: 100vh;
+        }
+
+
+        /* =====================================================
+           NAVBAR
+        ===================================================== */
+
+        .navbar {
+            height: 70px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 40px;
+
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            font-size: 21px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 28px;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #6b7280;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .nav-links a:hover {
+            color: #4f46e5;
+        }
+
+        .nav-links .active {
+            color: #4f46e5;
+        }
+
+
+        /* =====================================================
+           MAIN CONTAINER
+        ===================================================== */
+
+        .container {
+            max-width: 1250px;
+            margin: auto;
+            padding: 40px 30px 60px;
+        }
+
+
+        /* =====================================================
+           HEADER
+        ===================================================== */
+
+        .page-header {
+            margin-bottom: 32px;
+        }
+
+        .page-header h1 {
+            font-size: 32px;
+            color: #111827;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: #6b7280;
+            font-size: 15px;
+        }
+
+
+        /* =====================================================
+           KPI CARDS
+        ===================================================== */
+
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 18px;
+            margin-bottom: 38px;
+        }
+
+        .kpi-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 22px;
+
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .kpi-label {
+            font-size: 13px;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+
+        .kpi-value {
+            font-size: 29px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+        .kpi-description {
+            margin-top: 7px;
+            font-size: 12px;
+            color: #9ca3af;
+        }
+
+
+        /* =====================================================
+           SECTION
+        ===================================================== */
+
+        .section {
+            margin-bottom: 40px;
+        }
+
+        .section-header {
+            margin-bottom: 18px;
+        }
+
+        .section-header h2 {
+            font-size: 21px;
+            color: #111827;
+            margin-bottom: 5px;
+        }
+
+        .section-header p {
+            color: #6b7280;
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           TOP DEMAND
+        ===================================================== */
+
+        .demand-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+        }
+
+        .demand-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 13px;
+            padding: 20px;
+
+            box-shadow: 0 2px 7px rgba(0, 0, 0, 0.035);
+        }
+
+        .rank {
+            font-size: 12px;
+            color: #9ca3af;
+            margin-bottom: 8px;
+        }
+
+        .demand-card h3 {
+            font-size: 17px;
+            margin-bottom: 14px;
+            color: #111827;
+        }
+
+        .score {
+            font-size: 25px;
+            font-weight: 700;
+            color: #4f46e5;
+        }
+
+        .score-label {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+        .demand-info {
+            margin-top: 15px;
+            padding-top: 13px;
+            border-top: 1px solid #f0f0f0;
+        }
+
+        .demand-info p {
+            font-size: 12px;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+
+
+        /* =====================================================
+           RECOMMENDATIONS
+        ===================================================== */
+
+        .recommendation-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 18px;
+        }
+
+        .recommendation-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 22px;
+
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .recommendation-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            margin-bottom: 15px;
+        }
+
+        .recommendation-top h3 {
+            font-size: 18px;
+            color: #111827;
+        }
+
+        .badge {
+            background: #eef2ff;
+            color: #4f46e5;
+
+            padding: 5px 10px;
+            border-radius: 20px;
+
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .recommendation-message {
+            color: #6b7280;
+            font-size: 13px;
+            line-height: 1.6;
+            margin-bottom: 17px;
+        }
+
+        .recommendation-stats {
+            display: flex;
+            gap: 25px;
+        }
+
+        .recommendation-stat strong {
+            display: block;
+            font-size: 16px;
+            color: #111827;
+        }
+
+        .recommendation-stat span {
+            font-size: 11px;
+            color: #9ca3af;
+        }
+
+
+        /* =====================================================
+           DEMAND VS SUPPLY
+        ===================================================== */
+
+        .supply-list {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 24px;
+
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .supply-row {
+            margin-bottom: 23px;
+        }
+
+        .supply-row:last-child {
+            margin-bottom: 0;
+        }
+
+        .supply-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .supply-category {
+            font-size: 13px;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .supply-values {
+            font-size: 12px;
+            color: #6b7280;
+        }
+
+        .bar-background {
+            width: 100%;
+            height: 9px;
+            background: #eef0f4;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+
+        .bar {
+            height: 100%;
+            background: #4f46e5;
+            border-radius: 20px;
+        }
+
+
+        /* =====================================================
+           TABLE
+        ===================================================== */
+
+        .table-wrapper {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+
+            overflow-x: auto;
+
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 750px;
+        }
+
+        th {
+            text-align: left;
+            padding: 15px 18px;
+
+            background: #fafafa;
+            border-bottom: 1px solid #e5e7eb;
+
+            color: #6b7280;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        td {
+            padding: 15px 18px;
+
+            border-bottom: 1px solid #f0f0f0;
+
+            font-size: 13px;
+            color: #374151;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        td:first-child {
+            font-weight: 600;
+            color: #111827;
+        }
+
+
+        /* =====================================================
+           LOWER GRID
+        ===================================================== */
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .info-card {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 14px;
+            padding: 24px;
+
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        .info-card h3 {
+            font-size: 17px;
+            margin-bottom: 18px;
+            color: #111827;
+        }
+
+
+        /* =====================================================
+           FEATURE IMPORTANCE
+        ===================================================== */
+
+        .feature-row {
+            margin-bottom: 17px;
+        }
+
+        .feature-header {
+            display: flex;
+            justify-content: space-between;
+
+            margin-bottom: 6px;
+        }
+
+        .feature-name {
+            font-size: 12px;
+            color: #4b5563;
+        }
+
+        .feature-value {
+            font-size: 12px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .feature-bar-background {
+            width: 100%;
+            height: 7px;
+
+            background: #eef0f4;
+            border-radius: 20px;
+
+            overflow: hidden;
+        }
+
+        .feature-bar {
+            height: 100%;
+            background: #6366f1;
+            border-radius: 20px;
+        }
+
+
+        /* =====================================================
+           MODEL PERFORMANCE
+        ===================================================== */
+
+        .performance-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+
+            padding: 14px 0;
+
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .performance-item:last-child {
+            border-bottom: none;
+        }
+
+        .performance-label {
+            font-size: 13px;
+            color: #6b7280;
+        }
+
+        .performance-value {
+            font-size: 15px;
+            font-weight: 700;
+            color: #111827;
+        }
+
+
+        /* =====================================================
+           EMPTY STATE
+        ===================================================== */
+
+        .empty {
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+
+            padding: 30px;
+
+            text-align: center;
+
+            color: #9ca3af;
+            font-size: 13px;
+        }
+
+
+        /* =====================================================
+           FOOTER NAVIGATION
+        ===================================================== */
+
+        .bottom-nav {
+            margin-top: 45px;
+            padding-top: 25px;
+
+            border-top: 1px solid #e5e7eb;
+
+            display: flex;
+            gap: 25px;
+        }
+
+        .bottom-nav a {
+            text-decoration: none;
+            color: #6b7280;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .bottom-nav a:hover {
+            color: #4f46e5;
+        }
+
+
+        /* =====================================================
+           RESPONSIVE
+        ===================================================== */
+
+        @media (max-width: 1000px) {
+
+            .kpi-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .demand-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .recommendation-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+
+        }
+
+
+        @media (max-width: 600px) {
+
+            .navbar {
+                padding: 0 18px;
+            }
+
+            .nav-links {
+                gap: 12px;
+            }
+
+            .nav-links a {
+                font-size: 12px;
+            }
+
+            .container {
+                padding: 25px 15px 45px;
+            }
+
+            .page-header h1 {
+                font-size: 26px;
+            }
+
+            .kpi-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .demand-grid {
+                grid-template-columns: 1fr;
+            }
+            .bar-value-hidden {
+                display: none;
+            }
+
+            .feature-value-hidden {
+                display: none;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <!-- =====================================================
+         NAVBAR
+    ===================================================== -->
+
+    <nav class="navbar">
+
+        <div class="logo">
+            Smart Resource Exchange
+        </div>
+
+        <div class="nav-links">
+
+            <a href="/">
+                Home
+            </a>
+
+            <a href="/marketplace/">
+                Marketplace
+            </a>
+
+            <a href="/lost_found/">
+                Lost &amp; Found
+            </a>
+
+            <a href="/trends/" class="active">
+                Trends
+            </a>
+
+        </div>
+
+    </nav>
+
+
+    <!-- =====================================================
+         MAIN
+    ===================================================== -->
+
+    <main class="container">
+
+
+        <!-- HEADER -->
+
+        <div class="page-header">
+
+            <h1>
+                Demand &amp; Marketplace Insights
+            </h1>
+
+            <p>
+                Understand marketplace demand, supply trends
+                and AI-generated recommendations.
+            </p>
+
+        </div>
+
+
+        <!-- =================================================
+             KPI CARDS
+        ================================================= -->
+
+        <section class="section">
+
+            <div class="kpi-grid">
+
+
+                <div class="kpi-card">
+
+                    <div class="kpi-label">
+                        Total Searches
+                    </div>
+
+                    <div class="kpi-value">
+                        {{ total_searches|default(0) }}
+                    </div>
+
+                    <div class="kpi-description">
+                        Recorded marketplace searches
+                    </div>
+
+                </div>
+
+
+                <div class="kpi-card">
+
+                    <div class="kpi-label">
+                        Total Views
+                    </div>
+
+                    <div class="kpi-value">
+                        {{ total_views|default(0) }}
+                    </div>
+
+                    <div class="kpi-description">
+                        Item interactions and views
+                    </div>
+
+                </div>
+
+
+                <div class="kpi-card">
+
+                    <div class="kpi-label">
+                        Active Listings
+                    </div>
+
+                    <div class="kpi-value">
+                        {{ total_listings|default(0) }}
+                    </div>
+
+                    <div class="kpi-description">
+                        Currently available items
+                    </div>
+
+                </div>
+
+
+                <div class="kpi-card">
+
+                    <div class="kpi-label">
+                        Categories Analyzed
+                    </div>
+
+                    <div class="kpi-value">
+                        {{ total_categories|default(0) }}
+                    </div>
+
+                    <div class="kpi-description">
+                        Categories processed by ML
+                    </div>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             TOP DEMAND
+        ================================================= -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <h2>
+                    Top Demand Categories
+                </h2>
+
+                <p>
+                    Categories currently receiving the highest predicted demand.
+                </p>
+
+            </div>
+
+
+            {% if top_demand %}
+
+                <div class="demand-grid">
+
+                    {% for item in top_demand %}
+
+                        {% set demand = item.demand_score|default(0)|float %}
+
+                        <div class="demand-card">
+
+                            <div class="rank">
+                                #{{ loop.index }}
+                            </div>
+
+                            <h3>
+                                {{ item.category|default("Unknown") }}
+                            </h3>
+
+                            <div class="score">
+                                {{ "%.1f"|format(demand) }}
+                            </div>
+
+                            <div class="score-label">
+                                Demand Score
+                            </div>
+
+                            <div class="demand-info">
+
+                                <p>
+                                    Listings:
+                                    <strong>
+                                        {{ item.get('features', {}).get('listings', 0) }}
+                                    </strong>
+                                </p>
+
+                                <p>
+                                    Searches:
+                                    <strong>
+                                        {{ item.get('features', {}).get('searches', 0) }}
+                                    </strong>
+                                </p>
+
+                                <p>
+                                    Views:
+                                    <strong>
+                                        {{ item.get('features', {}).get('views', 0) }}
+                                    </strong>
+                                </p>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty">
+                    No demand data available.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =================================================
+             AI RECOMMENDATIONS
+        ================================================= -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <h2>
+                    AI Recommendations
+                </h2>
+
+                <p>
+                    Recommendations generated from marketplace demand signals.
+                </p>
+
+            </div>
+
+
+            {% if recommendations %}
+
+                <div class="recommendation-grid">
+
+                    {% for item in recommendations %}
+
+                        {% if loop.index <= 6 %}
+
+                            <div class="recommendation-card">
+
+                                <div class="recommendation-top">
+
+                                    <h3>
+                                        {{ item.category|default("Unknown") }}
+                                    </h3>
+
+                                    <span class="badge">
+                                        {{ item.recommendation_level|default("N/A") }}
+                                    </span>
+
+                                </div>
+
+
+                                <p class="recommendation-message">
+
+                                    {{ item.message|default(
+                                        "No recommendation available."
+                                    ) }}
+
+                                </p>
+
+
+                                <div class="recommendation-stats">
+
+                                    <div class="recommendation-stat">
+
+                                        <strong>
+                                            {{ item.get('demand_score', 0) }}
+                                        </strong>
+
+                                        <span>
+                                            Demand
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="recommendation-stat">
+
+                                        <strong>
+                                            {{ item.get('features', {}).get('listings', 0) }}
+                                        </strong>
+
+                                        <span>
+                                            Listings
+                                        </span>
+
+                                    </div>
+
+
+                                    <div class="recommendation-stat">
+
+                                        <strong>
+                                            {{ item.get('features', {}).get('searches', 0) }}
+                                        </strong>
+
+                                        <span>
+                                            Searches
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        {% endif %}
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty">
+                    No AI recommendations available.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =================================================
+             DEMAND VS SUPPLY
+        ================================================= -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <h2>
+                    Demand vs Supply
+                </h2>
+
+                <p>
+                    Compare predicted demand against currently available listings.
+                </p>
+
+            </div>
+
+
+            {% if recommendations %}
+
+                <div class="supply-list">
+
+                    {% for item in recommendations %}
+
+                        {% set demand = item.demand_score|default(0)|float %}
+                        {% set listings = item.get('features', {}).get('listings', 0)|int %}
+
+                        <div class="supply-row">
+
+                            <div class="supply-header">
+
+                                <span class="supply-category">
+                                    {{ item.category|default("Unknown") }}
+                                </span>
+
+                                <span class="supply-values">
+                                    Demand: {{ "%.1f"|format(demand) }}
+                                    &nbsp; | &nbsp;
+                                    Listings: {{ listings }}
+                                </span>
+
+                            </div>
+
+
+                            {% set bar_width = demand %}
+
+                            {% if bar_width > 100 %}
+                                {% set bar_width = 100 %}
+                            {% endif %}
+
+
+                             <div class="bar-background">
+
+                                <div class="bar"></div>
+
+                                <span class="bar-value-hidden">
+                                    {{ bar_width }}
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="empty">
+                    No supply or demand data available.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =================================================
+             CATEGORY INSIGHTS
+        ================================================= -->
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <h2>
+                    Category Insights
+                </h2>
+
+                <p>
+                    Detailed marketplace activity for each analyzed category.
+                </p>
+
+            </div>
+
+
+            {% if recommendations %}
+
+                <div class="table-wrapper">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th>
+                                    Category
+                                </th>
+
+                                <th>
+                                    Searches
+                                </th>
+
+                                <th>
+                                    Views
+                                </th>
+
+                                <th>
+                                    Listings
+                                </th>
+
+                                <th>
+                                    Exam Days
+                                </th>
+
+                                <th>
+                                    Demand
+                                </th>
+
+                                <th>
+                                    Recommendation
+                                </th>
+
+                            </tr>
+
+                        </thead>
+
+
+                        <tbody>
+
+                            {% for item in recommendations %}
+
+                                <tr>
+
+                                    <td>
+                                        {{ item.category|default("Unknown") }}
+                                    </td>
+
+                                    <td>
+                                        {{ item.get('features', {}).get('searches', 0) }}
+                                    </td>
+
+                                    <td>
+                                        {{ item.get('features', {}).get('views', 0) }}
+                                    </td>
+
+                                    <td>
+                                        {{ item.get('features', {}).get('listings', 0) }}
+                                    </td>
+
+                                    <td>
+                                        {{ item.get('features', {}).get('exam_days', 0) }}
+                                    </td>
+
+                                    <td>
+                                        {{ "%.2f"|format(
+                                            item.demand_score|default(0)|float
+                                        ) }}
+                                    </td>
+
+                                    <td>
+                                        {{ item.recommendation_level|default("N/A") }}
+                                    </td>
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="empty">
+                    No category insights available.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+
+        <!-- =================================================
+             ML INFORMATION
+        ================================================= -->
+
+        <section class="section">
+
+            <div class="two-column">
+
+
+                <!-- FEATURE IMPORTANCE -->
+
+                <div class="info-card">
+
+                    <h3>
+                        ML Feature Importance
+                    </h3>
+
+
+                    {% if importance %}
+
+                        {% for feature, value in importance.items() %}
+
+                            {% set importance_value = value|default(0)|float %}
+
+                            {% set importance_width = importance_value * 100 %}
+
+                            {% if importance_width > 100 %}
+                                {% set importance_width = 100 %}
+                            {% endif %}
+
+                            <div class="feature-row">
+
+                                <div class="feature-header">
+
+                                    <span class="feature-name">
+                                        {{ feature }}
+                                    </span>
+
+                                    <span class="feature-value">
+                                        {{ "%.1f"|format(
+                                            importance_value * 100
+                                        ) }}%
+                                    </span>
+
+                                </div>
+
+
+                                <div class="bar-background">
+
+                                    <div class="bar"></div>
+
+                                    <span class="bar-value-hidden">
+                                        {{ bar_width }}
+                                    </span>
+
+                                </div>
+
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <div class="empty">
+                            Feature importance unavailable.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- MODEL PERFORMANCE -->
+
+                <div class="info-card">
+
+                    <h3>
+                        Model Performance
+                    </h3>
+
+
+                    {% if evaluation %}
+
+                        <div class="performance-item">
+
+                            <span class="performance-label">
+                                Mean Absolute Error
+                            </span>
+
+                            <span class="performance-value">
+                                {{ evaluation.mae|default("N/A") }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="performance-item">
+
+                            <span class="performance-label">
+                                R² Score
+                            </span>
+
+                            <span class="performance-value">
+                                {{ evaluation.r2|default("N/A") }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="performance-item">
+
+                            <span class="performance-label">
+                                Training Rows
+                            </span>
+
+                            <span class="performance-value">
+                                {{ evaluation.train_rows|default("N/A") }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="performance-item">
+
+                            <span class="performance-label">
+                                Testing Rows
+                            </span>
+
+                            <span class="performance-value">
+                                {{ evaluation.test_rows|default("N/A") }}
+                            </span>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="empty">
+                            Model evaluation unavailable.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             FOOTER NAVIGATION
+        ================================================= -->
+
+        <div class="bottom-nav">
+
+            <a href="/">
+                Home
+            </a>
+
+            <a href="/marketplace/">
+                Marketplace
+            </a>
+
+            <a href="/lost_found/">
+                Lost &amp; Found
+            </a>
+
+            <a href="/trends/">
+                Trends
+            </a>
+
+        </div>
+
+
+    </main>
+    <script>
+
+        document.querySelectorAll('.bar-background').forEach(function (container) {
+
+            const valueElement =
+                container.querySelector('.bar-value-hidden');
+
+            const bar =
+                container.querySelector('.bar');
+
+            if (valueElement && bar) {
+
+                let value =
+                    parseFloat(valueElement.textContent) || 0;
+
+                if (value < 0) {
+                    value = 0;
+                }
+
+                if (value > 100) {
+                    value = 100;
+                }
+
+                bar.style.width = value + '%';
+            }
+
+        });
+
+
+        document.querySelectorAll('.feature-bar-background').forEach(function (container) {
+
+            const valueElement =
+                container.querySelector('.feature-value-hidden');
+
+            const bar =
+                container.querySelector('.feature-bar');
+
+            if (valueElement && bar) {
+
+                let value =
+                    parseFloat(valueElement.textContent) || 0;
+
+                if (value < 0) {
+                    value = 0;
+                }
+
+                if (value > 100) {
+                    value = 100;
+                }
+
+                bar.style.width = value + '%';
+            }
+
+        });
+
+    </script>
+
+</body>
+
+</html>

@@ -10,7 +10,13 @@ from ai.lost_found import analyze_lost_found_item
 from ai.matching import find_best_matches
 
 from ml.pricing import suggest_price_from_ai_result
-from ml.demand import predict_category_demand
+from ml.demand import (
+    predict_category_demand,
+    load_data,
+    evaluate_model,
+    get_feature_importance
+)
+
 from ml.recommend import get_category_recommendations
 
 
@@ -88,9 +94,130 @@ def search():
         categories=categories
     )
 
-@app.route("/api/marketplace/trends/")
-def trends():
-    return database.get_search_demand()
+# trends / analytics ------------------------------------------------------------------------------
+
+def get_dashboard_feature_totals(recommendations):
+    """
+    Calculate total searches and views from the
+    feature data returned by demand.py.
+    """
+
+    total_searches = 0
+    total_views = 0
+
+    for recommendation in recommendations:
+
+        features = recommendation.get(
+            "features",
+            {}
+        )
+
+        total_searches += int(
+            features.get("searches", 0) or 0
+        )
+
+        total_views += int(
+            features.get("views", 0) or 0
+        )
+
+    return total_searches, total_views
+
+
+@app.route("/trends/")
+def trends_page():
+
+    # ------------------------------------------------
+    # Get categories
+    # ------------------------------------------------
+
+    df = load_data()
+
+    categories = (
+        df["category"]
+        .dropna()
+        .astype(str)
+        .unique()
+        .tolist()
+    )
+
+    # ------------------------------------------------
+    # Generate live ML recommendations
+    # ------------------------------------------------
+
+    recommendations = get_category_recommendations(
+        categories
+    )
+
+    # ------------------------------------------------
+    # Dashboard totals
+    # ------------------------------------------------
+
+    total_searches, total_views = (
+        get_dashboard_feature_totals(
+            recommendations
+        )
+    )
+
+    total_listings = sum(
+        item.get("features", {}).get("listings", 0)
+        for item in recommendations
+    )
+
+    total_categories = len(
+        recommendations
+    )
+
+    # ------------------------------------------------
+    # Top demand categories
+    # ------------------------------------------------
+
+    top_demand = sorted(
+        recommendations,
+        key=lambda item: item.get(
+            "demand_score",
+            0
+        ),
+        reverse=True
+    )[:5]
+
+    # ------------------------------------------------
+    # ML model information
+    # ------------------------------------------------
+
+    try:
+
+        evaluation = evaluate_model()
+
+    except ValueError:
+
+        evaluation = None
+
+    importance = get_feature_importance()
+
+    # ------------------------------------------------
+    # Render dashboard
+    # ------------------------------------------------
+
+    return render_template(
+        "trends.html",
+
+        recommendations=recommendations,
+
+        top_demand=top_demand,
+
+        total_searches=total_searches,
+
+        total_views=total_views,
+
+        total_listings=total_listings,
+
+        total_categories=total_categories,
+
+        evaluation=evaluation,
+
+        importance=importance
+    )
+
 
 
 
