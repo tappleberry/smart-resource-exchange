@@ -1,6 +1,18 @@
 import sqlite3
 
-DATABASE_NAME = "database/campus.db"
+import os
+from dotenv import load_dotenv
+
+# Loading database location from env file (for deploying)
+load_dotenv()
+
+DATABASE_NAME = os.getenv("DATABASE_URL")
+
+# for local testing
+if not DATABASE_NAME:
+    DATABASE_NAME = "database/campus.db"
+
+
 
 #=================  CONNECTION  =============================
 def get_connection():

@@ -9,7 +9,19 @@ from sklearn.metrics import mean_absolute_error, r2_score
 # Configuration
 # --------------------------------------------------
 
-DATA_PATH = "data/demand.csv"
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+# for deployment
+DATA_PATH = os.getenv("DEMAND_URL")
+
+# for local testing
+if not DATA_PATH:
+    DATA_PATH = "data/demand.csv"
+
+
 
 FEATURES = [
     "searches",
